@@ -30,7 +30,7 @@ To work on a feature in progress, switch to the branch: `>git checkout <branch>`
 
 4. Next, you will need to install [psycopg2](http://initd.org/psycopg/); the driver that allows your Django project to interface with PostgreSQL. To do this, open a terminal and change your current working directory to your Django projects root directory. Be sure to activate the virtual environment by running the command `>pipenv shell`. Then run the command `>pipenv install psycopg2`. 
 
-5. In the root directory of your Django project, create a .env file and create the following variables:
+5. In the root directory of your Django project, create a .env file and add the following variables:
 
 ```
 LOCAL_DB_ENGINE=django.db.backends.postgresql
