@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
+from dotenv import load_dotenv
 import os
+
+# Load environment variables from .env
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -31,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'api.apps.ApiConfig',
     'testapp.apps.TestappConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -76,8 +80,12 @@ WSGI_APPLICATION = 'discussionboard.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': str(os.environ.get('LOCAL_DB_ENGINE')),
+        'NAME': os.environ.get('LOCAL_DB_NAME'),
+        'USER': os.environ.get('LOCAL_DB_USER'),
+        'PASSWORD': os.environ.get('LOCAL_DB_PASSWORD'),
+        'HOST': os.environ.get('LOCAL_DB_HOST'),
+        'PORT': os.environ.get('LOCAL_DB_PORT'),
     }
 }
 
