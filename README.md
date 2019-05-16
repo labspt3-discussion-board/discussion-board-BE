@@ -12,7 +12,7 @@ Activate the virtual environment and install the required dependencies:
 >pipenv install
 ```
 
-Then you will need to [create and connect to a local database](#)
+Then you will need to [create and connect to a local database](#Create-and-connect-to-a-local-database)
 
 Launch the development server: `>python manage.py runserver`
 
