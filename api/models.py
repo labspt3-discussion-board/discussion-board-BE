@@ -2,11 +2,11 @@ from django.db import models
 
 # Models
 class User(models.Model):
-    email      = models.CharField(max_length=20)
-    username   = models.CharField(max_length=20)
-    password   = models.CharField(max_length=20)
-    premium    = models.BooleanField()
-    created_at = models.DateTimeField()
+    email      = models.CharField(max_length=20, null=True)
+    username   = models.CharField(max_length=20, null=True)
+    password   = models.CharField(max_length=20, null=True)
+    premium    = models.BooleanField(null=True)
+    created_at = models.DateTimeField(null=True)
 
 class Subtopic(models.Model):
     name       = models.CharField(max_length=20)

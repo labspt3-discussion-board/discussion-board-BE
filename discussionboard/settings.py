@@ -30,10 +30,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+APPEND_SLASH=False
+CORS_ORIGIN_ALLOW_ALL=True
+
+# change from cors allow all to this and add front end application
+# CORS_ORIGIN_WHITELIST = [
+#     "https://example.com",
+#     "https://sub.example.com",
+#     "http://localhost:8080",
+#     "http://127.0.0.1:9000"
+# )
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'api.apps.ApiConfig',
     'testapp.apps.TestappConfig',
     'django.contrib.admin',
@@ -45,6 +56,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
