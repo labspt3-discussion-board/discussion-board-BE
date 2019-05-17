@@ -32,6 +32,10 @@ def createUser(request):
 
         return response
     elif request.method =='GET':
-        return HttpResponse('no')
+        content = serializers.serialize("json", User.objects.all())
+
+        response = HttpResponse(content, content_type='application/json')
+
+        return response
 
 
