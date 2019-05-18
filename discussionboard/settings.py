@@ -41,6 +41,14 @@ CORS_ORIGIN_ALLOW_ALL=True
 #     "http://127.0.0.1:9000"
 # )
 
+# Rest Framework global settings
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASS': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ]
+}
+
+
 # Application definition
 
 INSTALLED_APPS = [
