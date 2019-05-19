@@ -7,6 +7,7 @@ from django.core                  import serializers
 from api.models                   import User
 from api.serializers              import UserSerializer
 import json
+import uuid
 
 # Database helper functions
 def getSerializedUsers():    # Get all users from database and return the serialized data
@@ -15,6 +16,7 @@ def getSerializedUsers():    # Get all users from database and return the serial
     return user_serializer.data
 def createNewUser(request):  # Create a new user, get all users and return serialized data
     data = JSONParser().parse(request)
+    data['uuid'] = uuid.uuid4().hex # Generate a random hexadecimal id for the new user
     user_serializer = UserSerializer(data=data)
     if user_serializer.is_valid():
         user_serializer.save()
@@ -22,7 +24,6 @@ def createNewUser(request):  # Create a new user, get all users and return seria
         return serialized_users
     elif not user_serializer.is_valid():
         return "Invalid Data"
-
 
 # api/
 @csrf_exempt
@@ -54,22 +55,15 @@ def users(request):
         response = None
         data     = createNewUser(request)
         if not (data == "Invalid Data"):
-            response = JsonResponse(data, status=406, safe=False)
+            response = JsonResponse(data, status=201, safe=False)
         else:
-            response = JsonResponse(data, status=201)
-        return response
-
-
-
-        print(JSONParser().parse(request))
-        response = HttpResponse('Success')
-        response.status_code = 201
+            response = JsonResponse(data, status=406, safe=False)
         return response
 
 # api/users/:id
 @csrf_exempt
-def user_details(request):
-    return
+def user_details(request, id):
+    return HttpResponse(id)
 
 
 

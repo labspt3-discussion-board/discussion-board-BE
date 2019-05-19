@@ -1,9 +1,11 @@
 from django.db import models
+import uuid
 
 # Models
 class User(models.Model):
-    email      = models.CharField(max_length=20, null=True)
+    uuid       = models.CharField(max_length=60, null=False, default=str(uuid.uuid4()))
     username   = models.CharField(max_length=20, null=True)
+    email      = models.CharField(max_length=20, null=True)
     password   = models.CharField(max_length=20, null=True)
     premium    = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
