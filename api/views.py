@@ -15,7 +15,7 @@ import json
 import uuid
 
 
-# /api/ #
+# /api/
 class Index(APIView):
 
     def get(self, request, format=None):
