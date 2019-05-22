@@ -2,6 +2,7 @@ from rest_framework               import status
 from rest_framework.parsers       import JSONParser
 from rest_framework.views         import APIView
 from rest_framework.response      import Response
+from rest_framework               import generics
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts             import render
 from django.http                  import HttpResponse, JsonResponse, Http404
@@ -25,9 +26,11 @@ class Index(APIView):
         return Response(serialized_users.data)
 
 # /api/users/
-class UserList(APIView):
+class UserList(generics.ListCreateAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
 
-    def get(self, request, format=None):
+    """def get(self, request, format=None):
         users           = User.objects.all()
         user_serializer = UserSerializer(users, many=True)
         return Response(user_serializer.data)
@@ -40,16 +43,15 @@ class UserList(APIView):
         if user_serializer.is_valid():
             user_serializer.save()
             return Response(user_serializer.data)
-        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
 
 # /api/users/:uuid
 class UserDetails(APIView):
-
     def get_object(self, uuid):
 
         try:
-            return settings.AUTH_USER_MODEL.objects.get(uuid=uuid)
-        except settings.AUTH_USER_MODEL.DoesNotExist:
+            return get_user_model().objects.get(uuid=uuid)
+        except get_user_model().DoesNotExist:
             raise Http404
 
     def get(self, request, uuid, format=None):
