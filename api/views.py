@@ -10,7 +10,7 @@ from django.core                  import serializers
 from django.contrib.auth.models   import User
 from django.contrib.auth          import get_user_model
 from api.models                   import Subtopic
-from api.serializers              import UserSerializer
+from api.serializers              import UserSerializer, SubtopicSerializer
 from django.conf                  import settings
 import json
 import uuid
@@ -79,4 +79,6 @@ class UserDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /api/subtopics/
-# class SubtopicList(APIView):
+class SubtopicList(generics.ListCreateAPIView):
+    queryset = Subtopic.objects.all()
+    serializer_class = SubtopicSerializer

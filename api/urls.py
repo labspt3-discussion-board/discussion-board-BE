@@ -6,4 +6,5 @@ urlpatterns = [
     # path('create-user/'    ,views.createUser          ,name='create-user' ),
     path('users/'          ,views.UserList.as_view()    ,name='users'       ),
     path('users/<uuid>/'   ,views.UserDetails.as_view() ,name='user details'),
+    path('subtopics/'   ,views.SubtopicList.as_view() ,name='subtopic list'),
 ]

@@ -6,7 +6,7 @@ from django.contrib.auth        import get_user_model
 
 class SubtopicSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Subtopic.objects.all()
+        model = Subtopic
         fields = ('id', 'uuid', 'name', 'private', 'created_at', 'owner')
 
 class UserSerializer(serializers.ModelSerializer):
