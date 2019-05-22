@@ -82,3 +82,36 @@ class UserDetails(APIView):
 class SubtopicList(generics.ListCreateAPIView):
     queryset = Subtopic.objects.all()
     serializer_class = SubtopicSerializer
+
+# /api/subtopics/:uuid
+class SubtopicDetails(APIView):
+    def get_object(self, uuid):
+
+        try:
+            return Subtopic.objects.get(uuid=uuid)
+        except Subtopic().DoesNotExist:
+            raise Http404
+
+    def get(self, request, uuid, format=None):
+
+        subtopic = self.get_object(uuid)
+        subtopic_serializer = SubtopicSerializer(subtopic)
+        return Response(subtopic_serializer.data)
+
+    def put(self, request, uuid, format=None):
+
+        data = JSONParser().parse(request)
+        subtopic = self.get_object(uuid)
+        subtopic_serializer = SubtopicSerializer(subtopic, data=data)
+
+        if subtopic_serializer.is_valid():
+            subtopic_serializer.save()
+            return Response(subtopic_serializer.data)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, uuid, format=None):
+
+        subtopic = self.get_object(uuid)
+        subtopic.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
