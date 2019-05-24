@@ -10,7 +10,7 @@ from django.core                  import serializers
 from django.contrib.auth.models   import User
 from django.contrib.auth          import get_user_model
 from api.models                   import Subtopic, Discussion, Comments
-from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer
+from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer, CommentSerializer
 from django.conf                  import settings
 import json
 import uuid
@@ -153,5 +153,41 @@ class DiscussionDetails(APIView):
         discussion = self.get_object(id)
         discussion.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 # /api/comments/
+class CommentList(generics.ListCreateAPIView):
+    queryset = Comments.objects.all()
+    serializer_class = CommentSerializer
+
 # /api/comments/id/
+class CommentDetails(APIView):
+    def get_object(self, id):
+
+        try:
+            return Comments.objects.get(id=id)
+        except Comments.DoesNotExist:
+            raise Http404
+
+    def get(self, request, id, format=None):
+
+        comment = self.get_object(id)
+        comment_serializer = CommentSerializer(comment)
+        return Response(comment_serializer.data)
+
+    def put(self, request, id, format=None):
+
+        data = JSONParser().parse(request)
+        comment = self.get_object(id)
+        comment_serializer = CommentSerializer(comment, data=data)
+
+        if comment_serializer.is_valid():
+            comment_serializer.save()
+            return Response(comment_serializer.data)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id, format=None):
+
+        comment = self.get_object(id)
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
