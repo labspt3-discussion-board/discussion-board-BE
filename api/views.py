@@ -115,3 +115,8 @@ class SubtopicDetails(APIView):
         subtopic = self.get_object(uuid)
         subtopic.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# /api/discussions/
+# /api/discussions/uuid/
+# /api/comments/
+# /api/comments/uuid/
