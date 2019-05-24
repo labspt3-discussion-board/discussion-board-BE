@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 class DiscussionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Discussion
-        fields = ('id', 'title', 'description', 'subtopic')
+        fields = ('id', 'title', 'description', 'owner', 'subtopic')
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

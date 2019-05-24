@@ -9,8 +9,8 @@ from django.http                  import HttpResponse, JsonResponse, Http404
 from django.core                  import serializers
 from django.contrib.auth.models   import User
 from django.contrib.auth          import get_user_model
-from api.models                   import Subtopic
-from api.serializers              import UserSerializer, SubtopicSerializer
+from api.models                   import Subtopic, Discussion, Comments
+from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer
 from django.conf                  import settings
 import json
 import uuid
@@ -89,7 +89,7 @@ class SubtopicDetails(APIView):
 
         try:
             return Subtopic.objects.get(uuid=uuid)
-        except Subtopic().DoesNotExist:
+        except Subtopic.DoesNotExist:
             raise Http404
 
     def get(self, request, uuid, format=None):
@@ -117,6 +117,41 @@ class SubtopicDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /api/discussions/
-# /api/discussions/uuid/
+class DiscussionList(generics.ListCreateAPIView):
+    queryset = Discussion.objects.all()
+    serializer_class = DiscussionSerializer
+
+# /api/discussions/id/
+class DiscussionDetails(APIView):
+    def get_object(self, id):
+
+        try:
+            return Discussion.objects.get(id=id)
+        except Discussion.DoesNotExist:
+            raise Http404
+
+    def get(self, request, id, format=None):
+
+        discussion = self.get_object(id)
+        discussion_serializer = DiscussionSerializer(discussion)
+        return Response(discussion_serializer.data)
+
+    def put(self, request, id, format=None):
+
+        data = JSONParser().parse(request)
+        discussion = self.get_object(id)
+        discussion_serializer = DiscussionSerializer(discussion, data=data)
+
+        if discussion_serializer.is_valid():
+            discussion_serializer.save()
+            return Response(discussion_serializer.data)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id, format=None):
+
+        discussion = self.get_object(id)
+        discussion.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 # /api/comments/
-# /api/comments/uuid/
+# /api/comments/id/
