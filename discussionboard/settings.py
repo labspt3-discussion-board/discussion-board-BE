@@ -41,6 +41,14 @@ CORS_ORIGIN_ALLOW_ALL=True
 #     "http://127.0.0.1:9000"
 # )
 
+# Rest Framework global settings
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASS': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ]
+}
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -53,6 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -93,7 +102,7 @@ WSGI_APPLICATION = 'discussionboard.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': str(os.environ.get('LOCAL_DB_ENGINE')),
+        'ENGINE': str(os.environ['LOCAL_DB_ENGINE']),
         'NAME': os.environ.get('LOCAL_DB_NAME'),
         'USER': os.environ.get('LOCAL_DB_USER'),
         'PASSWORD': os.environ.get('LOCAL_DB_PASSWORD'),
@@ -105,6 +114,9 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
+
+
+AUTH_USER_MODEL = 'api.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
