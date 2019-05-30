@@ -154,6 +154,10 @@ class DiscussionDetails(APIView):
         discussion.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+# /api/discussions/top/
+#class TopDiscussions(APIView):
+    #def get()
+
 # /api/comments/
 class CommentList(generics.ListCreateAPIView):
     queryset = Comments.objects.all()

@@ -32,9 +32,9 @@ import uuid
 # Models
 class User(AbstractUser): # Extend the default Django user model
     uuid            = models.CharField(max_length=60, null=False, default=str(uuid.uuid4()), unique=True)
-    username        = models.CharField(max_length=20, null=False, unique=True)
+    username        = models.CharField(max_length=255, null=False, unique=True)
     email           = models.EmailField(verbose_name='email address', max_length=255, null=False, unique=True)
-    password        = models.CharField(max_length=20, null=False)
+    password        = models.CharField(max_length=255, null=False)
     premium         = models.BooleanField(default=False)
     created_at      = models.DateTimeField(auto_now_add=True)
     is_active       = models.BooleanField(default=True)
