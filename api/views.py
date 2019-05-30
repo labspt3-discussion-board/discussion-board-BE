@@ -8,7 +8,7 @@ from django.shortcuts             import render
 from django.http                  import HttpResponse, JsonResponse, Http404
 from django.core                  import serializers
 from django.contrib.auth.models   import User
-from django.contrib.auth          import get_user_model
+from django.contrib.auth          import get_user_model, authenticate, login
 from api.models                   import Subtopic, Discussion, Comments
 from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer, CommentSerializer
 from django.conf                  import settings
@@ -20,33 +20,54 @@ import uuid
 class Index(APIView):
 
     def get(self, request, format=None):
-        Auth_User        = get_user_model()
-        users            = Auth_User.objects.all()
-        serialized_users = UserSerializer(users, many=True)
-        return Response(serialized_users.data)
+        if request.user.is_authenticated:
+            users = User.objects.all()
+            user_serializer = UserSerializer(users, many=True)
+            return Response(user_serializer.data)
+        else:
+            response = HttpResponse(status=403)
+            return response
+
+# /api/users/login/
+
+# /api/users/logout/
+
 
 # /api/users/
-class UserList(generics.ListCreateAPIView):
-    queryset = get_user_model().objects.all()
-    serializer_class = UserSerializer
+class UserList(APIView):
+    # queryset = User.objects.all()
+    # serializer_class = UserSerializer
 
-    """def get(self, request, format=None):
+    def get(self, request, format=None):
         users           = User.objects.all()
         user_serializer = UserSerializer(users, many=True)
         return Response(user_serializer.data)
 
     def post(self, request, format=None):
         data            = JSONParser().parse(request)
-        data['uuid']    = uuid.uuid4().hex            # Generate a random hexadecimal uuid for the new user
-        user_serializer = UserSerializer(data=data)
+        
+        user = User.objects.create_user(data['username'], data['email'], data['password'], first_name=data['firstName'], last_name=data['lastName'])
+        user.save()
 
-        if user_serializer.is_valid():
+        login(request, user)
+
+        return Response(data)
+
+
+
+
+
+        # data['uuid']    = uuid.uuid4().hex            # Generate a random hexadecimal uuid for the new user
+        # user_serializer = UserSerializer(data=data)
+
+        """if user_serializer.is_valid():
             user_serializer.save()
             return Response(user_serializer.data)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
 
 # /api/users/:uuid
 class UserDetails(APIView):
+    
     def get_object(self, uuid):
 
         try:
