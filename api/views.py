@@ -20,7 +20,7 @@ import uuid
 class Index(APIView):
 
     def get(self, request, format=None):
-        Auth_User             = get_user_model()
+        Auth_User        = get_user_model()
         users            = Auth_User.objects.all()
         serialized_users = UserSerializer(users, many=True)
         return Response(serialized_users.data)

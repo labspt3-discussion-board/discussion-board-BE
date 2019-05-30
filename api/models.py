@@ -3,32 +3,6 @@ from django.db                  import models
 from django.conf                import settings
 import uuid
 
-# Manager
-# class UserManager(BaseUserManager):
-#     def create_user(self, uuid, username, email, password):
-
-#         if not uuid:
-#             raise ValueError('uuid must be defined')
-
-#         if not email:
-#             raise ValueError('email must be defined')
-
-#         if not password:
-#             raise ValueError('password must be defined')
-
-#         user = self.model(uuid=uuid, username=username, email=self.normalize_email())
-#         user.set_password(password)
-#         user.save()
-#         return user
-
-#     def create_superuser(self, uuid, username, email, password):
-
-#         user = self.create_user(uuid, username, email, password)
-#         user.is_admin = True
-#         user.save(using=self.db)
-#         return user
-
-
 # Models
 class User(AbstractUser): # Extend the default Django user model
     uuid            = models.CharField(max_length=60, null=False, default=str(uuid.uuid4()), unique=True)
@@ -39,8 +13,6 @@ class User(AbstractUser): # Extend the default Django user model
     created_at      = models.DateTimeField(auto_now_add=True)
     is_active       = models.BooleanField(default=True)
     is_admin        = models.BooleanField(default=False)
-
-    # objects = UserManager()
 
     UUID_FIELD      = 'identifier'
     REQUIRED_FIELDS = ['uuid', 'email']

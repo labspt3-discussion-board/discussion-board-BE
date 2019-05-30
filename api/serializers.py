@@ -4,6 +4,8 @@ from api.models                 import Subtopic, Discussion, Comments
 from django.conf                import settings
 from django.contrib.auth        import get_user_model
 
+
+
 class SubtopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subtopic
