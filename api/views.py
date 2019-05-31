@@ -32,11 +32,8 @@ class Index(APIView):
 class UserLogin(APIView):
     def post(self, request, format=None):
         data     = JSONParser().parse(request)
-        # username = data['username']
         email    = data['email']
         password = data['password']
-
-        print(data)
 
         user = authenticate(username=email, password=password)
 
@@ -55,8 +52,6 @@ class UserLogout(APIView):
 
 # /api/users/
 class UserList(APIView):
-    # queryset = User.objects.all()
-    # serializer_class = UserSerializer
 
     def get(self, request, format=None):
         User = get_user_model()
@@ -65,17 +60,14 @@ class UserList(APIView):
         return Response(user_serializer.data)
 
     def post(self, request, format=None):
-        data            = JSONParser().parse(request)
+        data = JSONParser().parse(request)
         User = get_user_model()
 
-        username = data['username']
-        email = data['email']
-        password = data['password']
+        username   = data['username']
+        email      = data['email']
+        password   = data['password']
         first_name = data['firstName']
-        last_name = data['lastName']
-        
-
-
+        last_name  = data['lastName']
 
         user = User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name)
         user.save()
