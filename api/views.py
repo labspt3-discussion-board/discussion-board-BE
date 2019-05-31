@@ -7,8 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts             import render
 from django.http                  import HttpResponse, JsonResponse, Http404
 from django.core                  import serializers
-from django.contrib.auth.models   import User
-from django.contrib.auth          import get_user_model, authenticate, login
+# from django.contrib.auth.models   import User
+from django.contrib.auth          import get_user_model, authenticate, login, logout
 from api.models                   import Subtopic, Discussion, Comments
 from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer, CommentSerializer
 from django.conf                  import settings
@@ -29,9 +29,29 @@ class Index(APIView):
             return response
 
 # /api/users/login/
+class UserLogin(APIView):
+    def post(self, request, format=None):
+        data     = JSONParser().parse(request)
+        # username = data['username']
+        email    = data['email']
+        password = data['password']
+
+        print(data)
+
+        user = authenticate(username=email, password=password)
+
+        if user is not None:
+            login(request, user)
+            user_serializer = UserSerializer(user, many=False)
+            return Response(user_serializer.data)
+        else:
+            return Response('nope')
 
 # /api/users/logout/
-
+class UserLogout(APIView):
+    def get(self, request, format=None):
+        logout(request)
+        return Response()
 
 # /api/users/
 class UserList(APIView):
@@ -39,19 +59,33 @@ class UserList(APIView):
     # serializer_class = UserSerializer
 
     def get(self, request, format=None):
+        User = get_user_model()
         users           = User.objects.all()
         user_serializer = UserSerializer(users, many=True)
         return Response(user_serializer.data)
 
     def post(self, request, format=None):
         data            = JSONParser().parse(request)
+        User = get_user_model()
+
+        username = data['username']
+        email = data['email']
+        password = data['password']
+        first_name = data['firstName']
+        last_name = data['lastName']
         
-        user = User.objects.create_user(data['username'], data['email'], data['password'], first_name=data['firstName'], last_name=data['lastName'])
+
+
+
+        user = User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name)
         user.save()
 
-        login(request, user)
+        # login(request, user)
 
-        return Response(data)
+        # user_serializer = UserSerializer(user, many=False)
+
+        # return Response(user_serializer, status=HTTP_201_CREATED)
+        return Response()
 
 
 
