@@ -102,7 +102,7 @@ WSGI_APPLICATION = 'discussionboard.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': str(os.environ['LOCAL_DB_ENGINE']),
+        'ENGINE': str(os.environ.get('LOCAL_DB_ENGINE')),
         'NAME': os.environ.get('LOCAL_DB_NAME'),
         'USER': os.environ.get('LOCAL_DB_USER'),
         'PASSWORD': os.environ.get('LOCAL_DB_PASSWORD'),
