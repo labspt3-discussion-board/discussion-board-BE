@@ -3,33 +3,6 @@ from django.db                  import models
 from django.conf                import settings
 import uuid
 
-
-"""
-
-# Models
-class User(AbstractUser): # Extend the default Django user model
-    uuid            = models.CharField(max_length=60, null=False, default=str(uuid.uuid4()), unique=True)
-    # username        = models.CharField(max_length=20, null=False, unique=True)
-    # email           = models.EmailField(verbose_name='email address', max_length=255, null=False, unique=True)
-    # password        = models.CharField(max_length=20, null=False)
-    premium         = models.BooleanField(default=False)
-    created_at      = models.DateTimeField(auto_now_add=True)
-    is_active       = models.BooleanField(default=True)
-    is_admin        = models.BooleanField(default=False)
-
-    UUID_FIELD      = 'identifier'
-    REQUIRED_FIELDS = ['uuid', 'email']
-
-    # def __str__(self):
-        # return self.email
-
-    # def has_perm(self, perm, obj=None):
-        # return True
-
-    # def has_module_perms(self, api):
-        # return True
-"""
-
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password, first_name=None, last_name=None, premium=False):
 
@@ -51,10 +24,10 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
 
     uuid = models.CharField(max_length=60, null=False, default=str(uuid.uuid4()), unique=True)
-    username = models.CharField(max_length=20, null=False, unique=True, default='')
+    username = models.CharField(max_length=16, null=False, unique=True, default='')
     email = models.EmailField(verbose_name='email address', max_length=255, null=False, unique=True)
-    first_name = models.CharField(max_length=40, default='')
-    last_name = models.CharField(max_length=40, default='')
+    first_name = models.CharField(max_length=200, default='')
+    last_name = models.CharField(max_length=200, default='')
     premium = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

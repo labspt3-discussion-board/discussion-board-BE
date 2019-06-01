@@ -14,12 +14,11 @@ class SubtopicSerializer(serializers.ModelSerializer):
         fields = ('id', 'uuid', 'name', 'private', 'created_at', 'owner')
 
 class UserSerializer(serializers.ModelSerializer):
-    # subtopic = SubtopicSerializer(many=True, read_only=True, default=[])
+    subtopics = SubtopicSerializer(many=True, read_only=True, default=[])
 
     class Meta:
         model = get_user_model()
-        # fields = ('id', 'uuid', 'username', 'email', 'password', 'premium', 'created_at', 'subtopic')
-        fields = ('id', 'uuid', 'username', 'email', 'first_name', 'last_name', 'premium', 'created_at')
+        fields = ('id', 'uuid', 'username', 'email', 'first_name', 'last_name', 'premium', 'created_at', 'subtopics')
 
 class DiscussionSerializer(serializers.ModelSerializer):
     class Meta:

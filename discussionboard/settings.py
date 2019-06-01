@@ -28,18 +28,25 @@ SECRET_KEY = '5qh9$2$k@ov=!zfu2z7a!egb)s&!*yoc6*-$xvd^3ffba5a_)5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 APPEND_SLASH=False
-CORS_ORIGIN_ALLOW_ALL=True
 
 # change from cors allow all to this and add front end application
-# CORS_ORIGIN_WHITELIST = [
-#     "https://example.com",
-#     "https://sub.example.com",
-#     "http://localhost:8080",
-#     "http://127.0.0.1:9000"
-# )
+CORS_ORIGIN_WHITELIST = [
+    # "https://example.com",
+    # "https://sub.example.com",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
+]
+
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "X-CSRFToken",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+SESSION_COOKIE_SAMESITE = None
 
 # Rest Framework global settings
 REST_FRAMEWORK = {

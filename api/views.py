@@ -12,6 +12,8 @@ from django.contrib.auth          import get_user_model, authenticate, login, lo
 from api.models                   import Subtopic, Discussion, Comments
 from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer, CommentSerializer
 from django.conf                  import settings
+from validate_email               import validate_email
+from django.middleware.csrf       import get_token
 import json
 import uuid
 
@@ -21,6 +23,7 @@ class Index(APIView):
 
     def get(self, request, format=None):
         if request.user.is_authenticated:
+            User = get_user_model()
             users = User.objects.all()
             user_serializer = UserSerializer(users, many=True)
             return Response(user_serializer.data)
@@ -47,7 +50,7 @@ class UserLogin(APIView):
 # /api/users/logout/
 class UserLogout(APIView):
     def get(self, request, format=None):
-        logout(request)
+        print(logout(request))
         return Response()
 
 # /api/users/
@@ -63,7 +66,23 @@ class UserList(APIView):
         data = JSONParser().parse(request)
         User = get_user_model()
 
-        username   = data['username']
+        # Validate username
+        username = ''
+        if data['username'] is not None:
+            username = data['username']
+            # return Response('Exists')
+        else:
+            return Response('Missing username property')
+
+        # Validate email
+        email = ''
+        if data['email'] is not None:
+            email = data['email']
+            if validate_email(email) is not True:
+                return Response('Invalid email')
+        else:
+            return Response('Missing email property')
+        
         email      = data['email']
         password   = data['password']
         first_name = data['firstName']
@@ -72,24 +91,23 @@ class UserList(APIView):
         user = User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name)
         user.save()
 
-        # login(request, user)
+        
+        login(request, user)
 
-        # user_serializer = UserSerializer(user, many=False)
+        # print(get_token(request))
+
+        # headers={
+        #     "X-CSRFToken": get_token(request)
+        # }
+
+        user_serializer = UserSerializer(user, many=False)
+
+        response = HttpResponse()
+        response['X-CSRFToken'] = get_token(request)
 
         # return Response(user_serializer, status=HTTP_201_CREATED)
-        return Response()
-
-
-
-
-
-        # data['uuid']    = uuid.uuid4().hex            # Generate a random hexadecimal uuid for the new user
-        # user_serializer = UserSerializer(data=data)
-
-        """if user_serializer.is_valid():
-            user_serializer.save()
-            return Response(user_serializer.data)
-        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
+        # return Response(user_serializer.data, headers={"Access-Control-Allow-Origin": "http://localhost:3000","X-CSRFToken": get_token(request)})
+        return response
 
 # /api/users/:uuid
 class UserDetails(APIView):
@@ -126,9 +144,19 @@ class UserDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /api/subtopics/
-class SubtopicList(generics.ListCreateAPIView):
-    queryset = Subtopic.objects.all()
-    serializer_class = SubtopicSerializer
+class SubtopicList(APIView):
+    
+    # queryset = Subtopic.objects.all()
+    # serializer_class = SubtopicSerializer
+
+    def get(self, request):
+        return Response('hi')
+
+    def post(self, request):
+        if request.user.is_authenticated:
+            return Response('yes')
+        else:
+            return Response('no')
 
 # /api/subtopics/:uuid
 class SubtopicDetails(APIView):
