@@ -4,8 +4,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'discussionboard.settings')
 import django
 django.setup()
 
-import random
-
 from api.models import User, Subtopic, Discussion, Comments
 from faker import Faker
 
