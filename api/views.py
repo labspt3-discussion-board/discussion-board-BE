@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts             import render
 from django.http                  import HttpResponse, JsonResponse, Http404
 from django.core                  import serializers
-# from django.contrib.auth.models   import User
 from django.contrib.auth          import get_user_model, authenticate, login, logout
 from api.models                   import Subtopic, Discussion, Comments
 from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer, CommentSerializer
@@ -31,6 +30,17 @@ class Index(APIView):
             response = HttpResponse(status=403)
             return response
 
+# /api/users/login/check/
+class UserLoginCheck(APIView):
+    def get(self, request, format=None):
+        if request.user.is_authenticated:
+            id = request.user.id
+            user = get_user_model().objects.get(id=id)
+            user_serializer = UserSerializer(user)
+            return Response((user_serializer.data, { "loggedIn": True }))
+        else:
+            return Response((None, { "loggedIn": False }))
+
 # /api/users/login/
 class UserLogin(APIView):
     def post(self, request, format=None):
@@ -43,14 +53,14 @@ class UserLogin(APIView):
         if user is not None:
             login(request, user)
             user_serializer = UserSerializer(user, many=False)
-            return Response(user_serializer.data)
+            return Response((user_serializer.data, { "loggedIn": True, }))
         else:
-            return Response('nope')
+            return Response(('nope', { "loggedIn": False }))
 
 # /api/users/logout/
 class UserLogout(APIView):
     def get(self, request, format=None):
-        print(logout(request))
+        logout(request)
         return Response()
 
 # /api/users/
@@ -91,23 +101,15 @@ class UserList(APIView):
         user = User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name)
         user.save()
 
-        
         login(request, user)
-
-        # print(get_token(request))
-
-        # headers={
-        #     "X-CSRFToken": get_token(request)
-        # }
 
         user_serializer = UserSerializer(user, many=False)
 
-        response = HttpResponse()
-        response['X-CSRFToken'] = get_token(request)
+        loggedIn = False
+        if request.user.is_authenticated:
+            loggedIn = True
 
-        # return Response(user_serializer, status=HTTP_201_CREATED)
-        # return Response(user_serializer.data, headers={"Access-Control-Allow-Origin": "http://localhost:3000","X-CSRFToken": get_token(request)})
-        return response
+        return Response((user_serializer.data, { "loggedIn": loggedIn }))
 
 # /api/users/:uuid
 class UserDetails(APIView):

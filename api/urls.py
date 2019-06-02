@@ -8,6 +8,7 @@ urlpatterns = [
     # path('users/<uuid>/'   ,views.UserDetails.as_view() ,name='user details'),
     path('users/login/'    ,views.UserLogin.as_view()   ,name='login'       ),
     path('users/logout/'   ,views.UserLogout.as_view()  ,name='logout'      ),
+    path('users/login/check/' ,views.UserLoginCheck.as_view() ,name='login check'),
     path('subtopics/'   ,views.SubtopicList.as_view() ,name='subtopic list'),
     # path('subtopics/<uuid>/'   ,views.SubtopicDetails.as_view() ,name='subtopic details'),
     # path('discussions/'   ,views.DiscussionList.as_view() ,name='discussion list'),
