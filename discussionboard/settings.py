@@ -32,7 +32,7 @@ APPEND_SLASH=False
 
 # change from cors allow all to this and add front end application
 CORS_ORIGIN_WHITELIST = [
-    # "https://example.com",
+    "https://lambda-discussion-board.herokuapp.com",
     # "https://sub.example.com",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
