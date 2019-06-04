@@ -156,7 +156,7 @@ class DiscussionDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /api/discussions/top/
-class TopDiscussions(generics.ListCreateAPIView):
+class TopDiscussions(generics.ListAPIView):
     queryset = Discussion.objects.annotate(Count('upvote')).order_by('-upvote')[:10]
     serializer_class = DiscussionSerializer
 
