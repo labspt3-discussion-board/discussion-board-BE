@@ -9,6 +9,7 @@ from django.http                  import HttpResponse, JsonResponse, Http404
 from django.core                  import serializers
 from django.contrib.auth.models   import User
 from django.contrib.auth          import get_user_model
+from django.db.models             import Count
 from api.models                   import Subtopic, Discussion, Comments
 from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer, CommentSerializer
 from django.conf                  import settings
@@ -155,8 +156,9 @@ class DiscussionDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /api/discussions/top/
-#class TopDiscussions(APIView):
-    #def get()
+class TopDiscussions(generics.ListCreateAPIView):
+    queryset = Discussion.objects.annotate(Count('upvote')).order_by('-upvote')[:10]
+    serializer_class = DiscussionSerializer
 
 # /api/comments/
 class CommentList(generics.ListCreateAPIView):
