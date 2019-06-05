@@ -16,12 +16,14 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ('id', 'uuid', 'username', 'email', 'password', 'premium', 'created_at', 'subtopic')
 
-class DiscussionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Discussion
-        fields = ('id', 'title', 'description', 'upvote', 'downvote', 'owner', 'subtopic')
-
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
         fields = ('id', 'text', 'owner', 'created_at', 'discussion_id')
+
+
+class DiscussionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Discussion
+        fields = ('id', 'title', 'description', 'upvote', 'downvote', 'owner', 'created_at', 'subtopic', 'comments')
