@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from api.models                 import Subtopic, Discussion, Comments
 from django.conf                import settings
 from django.contrib.auth        import get_user_model
+from django.db.models           import Count
 
 class SubtopicSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,7 +24,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class DiscussionSerializer(serializers.ModelSerializer):
-
+    comments = CommentSerializer(many=True, read_only=True, default=[])
     class Meta:
         model = Discussion
         fields = ('id', 'title', 'description', 'upvote', 'downvote', 'owner', 'created_at', 'subtopic', 'comments')

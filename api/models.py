@@ -75,8 +75,8 @@ class Discussion(models.Model):
 class Comments(models.Model):
     text          = models.TextField(max_length=200)
     created_at    = models.DateTimeField(auto_now_add=True)
-    owner         = models.IntegerField()
-    discussion_id = models.IntegerField()
+    owner         = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    discussion_id = models.ForeignKey(Discussion, related_name='comments', on_delete=models.CASCADE)
 
 # Relationships
 class UserToSubtopic(models.Model):
