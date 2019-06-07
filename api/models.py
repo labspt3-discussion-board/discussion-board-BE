@@ -1,59 +1,40 @@
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, AbstractBaseUser
 from django.db                  import models
 from django.conf                import settings
 import uuid
 
-# Manager
-# class UserManager(BaseUserManager):
-#     def create_user(self, uuid, username, email, password):
+class UserManager(BaseUserManager):
+    def create_user(self, username, email, password, first_name=None, last_name=None, premium=False):
 
-#         if not uuid:
-#             raise ValueError('uuid must be defined')
+        if not email:
+            raise ValueError('Users must have an email address')
 
-#         if not email:
-#             raise ValueError('email must be defined')
+        user = self.model(
+            username=username,
+            email=self.normalize_email(email),
+            first_name=first_name,
+            last_name=last_name,
+            premium=premium,
+        )
 
-#         if not password:
-#             raise ValueError('password must be defined')
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-#         user = self.model(uuid=uuid, username=username, email=self.normalize_email())
-#         user.set_password(password)
-#         user.save()
-#         return user
+class User(AbstractBaseUser):
 
-#     def create_superuser(self, uuid, username, email, password):
+    uuid = models.CharField(max_length=60, null=False, default=str(uuid.uuid4()), unique=True)
+    username = models.CharField(max_length=16, null=False, unique=True, default='')
+    email = models.EmailField(verbose_name='email address', max_length=255, null=False, unique=True)
+    first_name = models.CharField(max_length=200, default='')
+    last_name = models.CharField(max_length=200, default='')
+    premium = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-#         user = self.create_user(uuid, username, email, password)
-#         user.is_admin = True
-#         user.save(using=self.db)
-#         return user
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'password']
 
-
-# Models
-class User(AbstractUser): # Extend the default Django user model
-    uuid            = models.CharField(max_length=60, null=False, default=str(uuid.uuid4()), unique=True)
-    username        = models.CharField(max_length=255, null=False, unique=True)
-    email           = models.EmailField(verbose_name='email address', max_length=255, null=False, unique=True)
-    password        = models.CharField(max_length=255, null=False)
-    premium         = models.BooleanField(default=False)
-    created_at      = models.DateTimeField(auto_now_add=True)
-    is_active       = models.BooleanField(default=True)
-    is_admin        = models.BooleanField(default=False)
-
-    # objects = UserManager()
-
-    UUID_FIELD      = 'identifier'
-    REQUIRED_FIELDS = ['uuid', 'email']
-
-    # def __str__(self):
-        # return self.email
-
-    # def has_perm(self, perm, obj=None):
-        # return True
-
-    # def has_module_perms(self, api):
-        # return True
-
+    objects = UserManager()
 
 
 class Subtopic(models.Model):
@@ -69,7 +50,7 @@ class Discussion(models.Model):
     upvote      = models.IntegerField(default=0)
     downvote    = models.IntegerField(default=0)
     created_at  = models.DateTimeField(auto_now_add=True)
-    owner       = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     subtopic    = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
 
 class Comments(models.Model):
