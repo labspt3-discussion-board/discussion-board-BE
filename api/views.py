@@ -161,7 +161,7 @@ class UserOauthFacebook(APIView):
 
         user_serializer = UserSerializer(user, many=False)
 
-         if user_serializer.data['auth_type'] == 'facebook_oauth':
+        if user_serializer.data['auth_type'] == 'facebook_oauth':
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             response = HttpResponseRedirect(CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true')
             return response
