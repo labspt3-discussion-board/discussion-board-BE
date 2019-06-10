@@ -126,6 +126,12 @@ class UserOauthGoogle(APIView):
             response['Location'] = CLIENT_APP_URL + '?loggedIn=false'
             return response
 
+# /api/users/oauth/facebook/
+class UserOauthFacebook(APIView):
+    def get(self, request, format=None):
+        return Response('hi')
+
+
 # /api/users/
 class UserList(APIView):
 
@@ -174,7 +180,7 @@ class UserList(APIView):
 
         return Response((user_serializer.data, { "loggedIn": loggedIn }))
 
-# /api/users/:uuid
+# /api/users/:id
 class UserDetails(APIView):
     
     def get_object(self, id):
