@@ -139,15 +139,16 @@ class UserOauthFacebook(APIView):
         access_token = token_req.json()['access_token']
 
         # Get user id
-        id_req = requests.get('https://graph.facebook.com/debug_token?input_token=' + str(access_token) + '&access_token=' + str(access_token))
-        """
-        user_id = id_req.json()['data']['user_id']
+        # id_req = requests.get('https://graph.facebook.com/debug_token?input_token=' + str(access_token) + '&access_token=' + str(access_token))
+        
+        # user_id = id_req.json()['data']['user_id']
 
         # Get user info
-        info_req = requests.get('https://graph.facebook.com/' + str(user_id) + '?fields=first_name,last_name,email&access_token=' + str(access_token))
+        info_req = requests.get('https://graph.facebook.com/me?access_token=' + str(access_token) + '&fields=first_name,last_name,email')
         
         user_info = info_req.json()
 
+        """
         first_name = user_info['first_name']
         last_name  = user_info['last_name']
         email      = user_info['email']
@@ -172,7 +173,7 @@ class UserOauthFacebook(APIView):
             return response
         """
 
-        return Response(id_req.json())
+        return Response(info_req.json())
 
 # /api/users/
 class UserList(APIView):
