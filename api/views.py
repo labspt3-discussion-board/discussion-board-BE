@@ -137,7 +137,7 @@ class UserOauthFacebook(APIView):
         url = 'https://graph.facebook.com/v3.3/oauth/access_token?client_id=' + str(os.environ.get('FACEBOOK_OAUTH_ID')) + '&redirect_uri=' + FACEBOOK_AUTH_REDIRECT_URI + '&client_secret=' + str(os.environ.get('FACEBOOK_OAUTH_SECRET')) + '&code=' + code
 
         token_req = requests.get(url)
-        access_token = token_req.json()['access_token']
+        # access_token = token_req.json()['access_token']
 
         return Response(token_req.json())
 
