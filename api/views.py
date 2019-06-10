@@ -21,8 +21,10 @@ import uuid
 import requests
 import jwt
 
-GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
-CLIENT_APP_URL = 'http://localhost:3000/'
+# GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
+GOOGLE_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/google/'
+# CLIENT_APP_URL = 'http://localhost:3000/'
+CLIENT_APP_URL = 'https://lambda-discussion-board.herokuapp.com/'
 
 # /api/
 class Index(APIView):
