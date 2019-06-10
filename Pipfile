@@ -14,6 +14,11 @@ psycopg2 = "*"
 python-dotenv = "*"
 django-cors-headers = "*"
 djangorestframework = "*"
+validate-email = "*"
+social-auth-app-django = "*"
+django-rest-framework-social-oauth2 = "*"
+pyjwt = "*"
+cryptography = "*"
 
 [requires]
 python_version = "3.7"
