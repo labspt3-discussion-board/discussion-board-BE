@@ -146,6 +146,8 @@ class UserOauthFacebook(APIView):
         # Get user info
         info_req = requests.get('https://graph.facebook.com/' + str(user_id) + '?fields=first_name,last_name,email&access_token=' + str(access_token))
         
+        user_info = info_req.json()
+
         first_name = user_info['first_name']
         last_name  = user_info['last_name']
         email      = user_info['email']
