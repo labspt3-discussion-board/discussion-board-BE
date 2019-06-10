@@ -129,7 +129,7 @@ class UserOauthGoogle(APIView):
 # /api/users/oauth/facebook/
 class UserOauthFacebook(APIView):
     def get(self, request, format=None):
-        return Response('hi')
+        return Response()
 
 
 # /api/users/
