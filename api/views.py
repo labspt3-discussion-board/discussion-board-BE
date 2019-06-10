@@ -148,7 +148,6 @@ class UserOauthFacebook(APIView):
         
         user_info = info_req.json()
 
-        """
         first_name = user_info['first_name']
         last_name  = user_info['last_name']
         email      = user_info['email']
@@ -171,9 +170,6 @@ class UserOauthFacebook(APIView):
         else:
             response = HttpResponseRedirect(CLIENT_APP_URL + '?loggedIn=false')
             return response
-        """
-
-        return Response(info_req.json())
 
 # /api/users/
 class UserList(APIView):
