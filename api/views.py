@@ -107,7 +107,7 @@ class UserOauthGoogle(APIView):
         first_name = user_info['given_name']
         last_name  = user_info['family_name']
         email      = user_info['email']
-        username   = first_name.lower() + '.' + last_name.lower() + random.randint(0,1001)
+        username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
         auth_type  = 'google_oauth'
     
         # Create/login user
@@ -147,7 +147,7 @@ class UserOauthFacebook(APIView):
         first_name = user_info['first_name']
         last_name  = user_info['last_name']
         email      = user_info['email']
-        username   = first_name.lower() + '.' + last_name.lower() + random.randint(0,1001)
+        username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
         auth_type  = 'facebook_oauth'
 
         # Create/login user
