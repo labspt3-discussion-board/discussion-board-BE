@@ -17,12 +17,9 @@ from django.conf                  import settings
 from validate_email               import validate_email
 from django.middleware.csrf       import get_token
 from dotenv                       import load_dotenv
-from jwt.algorithms               import RSAAlgorithm
 import os
 import json
-import uuid
 import requests
-import jwt
 
 # GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
 GOOGLE_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/google/'
