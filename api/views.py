@@ -120,11 +120,9 @@ class UserOauthGoogle(APIView):
         if user_serializer.data['auth_type'] == 'google_oauth':
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             response = HttpResponseRedirect(CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true')
-            # response['Location'] = CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true'
             return response
         else:
-            response = HttpResponse()
-            response['Location'] = CLIENT_APP_URL + '?loggedIn=false'
+            response = HttpResponseRedirect(CLIENT_APP_URL + '?loggedIn=false')
             return response
 
 # /api/users/oauth/facebook/
@@ -168,8 +166,7 @@ class UserOauthFacebook(APIView):
             response = HttpResponseRedirect(CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true')
             return response
         else:
-            response = HttpResponse()
-            response['Location'] = CLIENT_APP_URL + '?loggedIn=false'
+            response = HttpResponseRedirect(CLIENT_APP_URL + '?loggedIn=false')
             return response
 
 
