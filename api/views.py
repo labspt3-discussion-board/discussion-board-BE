@@ -140,6 +140,7 @@ class UserOauthFacebook(APIView):
 
         # Get user id
         id_req = requests.get('https://graph.facebook.com/debug_token?input_token=' + str(access_token) + '&access_token=' + str(access_token))
+        """
         user_id = id_req.json()['data']['user_id']
 
         # Get user info
@@ -169,6 +170,9 @@ class UserOauthFacebook(APIView):
         else:
             response = HttpResponseRedirect(CLIENT_APP_URL + '?loggedIn=false')
             return response
+        """
+
+        return Response(id_req.json())
 
 # /api/users/
 class UserList(APIView):
