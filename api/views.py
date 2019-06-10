@@ -133,13 +133,18 @@ class UserOauthFacebook(APIView):
 
         code = request.query_params.get('code','')
         
-        # Get the token url and user info url from the discovery document.
+        # Get access token
         url = 'https://graph.facebook.com/v3.3/oauth/access_token?client_id=' + str(os.environ.get('FACEBOOK_OAUTH_ID')) + '&redirect_uri=' + FACEBOOK_AUTH_REDIRECT_URI + '&client_secret=' + str(os.environ.get('FACEBOOK_OAUTH_SECRET')) + '&code=' + code
 
         token_req = requests.get(url)
-        # access_token = token_req.json()['access_token']
+        access_token = token_req.json()['access_token']
 
-        return Response(token_req.json())
+        # Get user id
+        id_req = requests.get('graph.facebook.com/debug_token?input_token=' + str(access_token) + '&access_token=' + str(access_token))
+        user_id = id_req.json()['data']['user_id']
+
+
+        return Response(id_req.json())
 
 
 # /api/users/
