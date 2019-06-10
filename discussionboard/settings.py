@@ -48,6 +48,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 CORS_ALLOW_CREDENTIALS = True
 SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_DOMAIN = '.herokuapp.com'
 
 # Rest Framework global settings
 REST_FRAMEWORK = {
