@@ -67,11 +67,13 @@ class Subtopic(models.Model):
     name       = models.CharField(max_length=20)
     private    = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    owner      = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    owner      = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='subtopic', on_delete=models.CASCADE)
 
 class Discussion(models.Model):
     title       = models.CharField(max_length=20)
     description = models.TextField(max_length=200)
+    upvote      = models.IntegerField(default=0)
+    downvote    = models.IntegerField(default=0)
     created_at  = models.DateTimeField(auto_now_add=True)
     owner       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     subtopic    = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
@@ -79,8 +81,8 @@ class Discussion(models.Model):
 class Comments(models.Model):
     text          = models.TextField(max_length=200)
     created_at    = models.DateTimeField(auto_now_add=True)
-    owner         = models.IntegerField()
-    discussion_id = models.IntegerField()
+    owner         = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    discussion_id = models.ForeignKey(Discussion, related_name='comments', on_delete=models.CASCADE)
 
 # Relationships
 class UserToSubtopic(models.Model):

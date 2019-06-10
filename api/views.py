@@ -7,6 +7,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts             import render
 from django.http                  import HttpResponse, JsonResponse, Http404, HttpResponseRedirect
 from django.core                  import serializers
+from django.contrib.auth.models   import User
+from django.contrib.auth          import get_user_model
+from django.db.models             import Count
 from django.contrib.auth          import get_user_model, authenticate, login, logout
 from api.models                   import Subtopic, Discussion, Comments
 from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer, CommentSerializer
@@ -155,7 +158,7 @@ class UserList(APIView):
                 return Response('Invalid email')
         else:
             return Response('Missing email property')
-        
+
         email      = data['email']
         password   = data['password']
         first_name = data['firstName']
@@ -210,7 +213,7 @@ class UserDetails(APIView):
 
 # /api/subtopics/
 class SubtopicList(APIView):
-    
+
     # queryset = Subtopic.objects.all()
     # serializer_class = SubtopicSerializer
 
@@ -293,6 +296,11 @@ class DiscussionDetails(APIView):
         discussion = self.get_object(id)
         discussion.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# /api/discussions/top/
+class TopDiscussions(generics.ListAPIView):
+    queryset = Discussion.objects.annotate(Count('upvote')).order_by('-upvote')[:10]
+    serializer_class = DiscussionSerializer
 
 # /api/comments/
 class CommentList(generics.ListCreateAPIView):
