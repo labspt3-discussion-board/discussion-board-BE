@@ -11,14 +11,14 @@ from django.contrib.auth        import get_user_model
 class SubtopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subtopic
-        fields = ('id', 'uuid', 'name', 'private', 'created_at', 'owner')
+        fields = ('id', 'name', 'private', 'created_at', 'owner')
 
 class UserSerializer(serializers.ModelSerializer):
     subtopics = SubtopicSerializer(many=True, read_only=True, default=[])
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'uuid', 'username', 'email', 'first_name', 'last_name', 'premium', 'created_at', 'subtopics')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'premium', 'created_at', 'auth_type', 'subtopics')
 
 class DiscussionSerializer(serializers.ModelSerializer):
     class Meta:

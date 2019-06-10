@@ -5,7 +5,7 @@ from rest_framework.response      import Response
 from rest_framework               import generics
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts             import render
-from django.http                  import HttpResponse, JsonResponse, Http404
+from django.http                  import HttpResponse, JsonResponse, Http404, HttpResponseRedirect
 from django.core                  import serializers
 from django.contrib.auth          import get_user_model, authenticate, login, logout
 from api.models                   import Subtopic, Discussion, Comments
@@ -13,9 +13,16 @@ from api.serializers              import UserSerializer, SubtopicSerializer, Dis
 from django.conf                  import settings
 from validate_email               import validate_email
 from django.middleware.csrf       import get_token
+from dotenv                       import load_dotenv
+from jwt.algorithms               import RSAAlgorithm
+import os
 import json
 import uuid
+import requests
+import jwt
 
+GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
+CLIENT_APP_URL = 'http://localhost:3000/'
 
 # /api/
 class Index(APIView):
@@ -51,11 +58,11 @@ class UserLogin(APIView):
         user = authenticate(username=email, password=password)
 
         if user is not None:
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             user_serializer = UserSerializer(user, many=False)
             return Response((user_serializer.data, { "loggedIn": True, }))
         else:
-            return Response(('nope', { "loggedIn": False }))
+            return Response(('Error', { "loggedIn": False }))
 
 # /api/users/logout/
 class UserLogout(APIView):
@@ -63,11 +70,65 @@ class UserLogout(APIView):
         logout(request)
         return Response()
 
+# /api/users/oauth/google/
+class UserOauthGoogle(APIView):
+    def get(self, request, format=None):
+
+        code = request.query_params.get('code','')
+        
+        # Get the token url and user info url from the discovery document.
+        url_req = requests.get('https://accounts.google.com/.well-known/openid-configuration')
+        token_endpoint = url_req.json()['token_endpoint']
+        userinfo_endpoint = url_req.json()['userinfo_endpoint']
+
+        # Exchange code for access token and id token
+        data = {
+            'code': code,
+            'client_id': str(os.environ.get('GOOGLE_OAUTH_ID')),
+            'client_secret': str(os.environ.get('GOOGLE_OAUTH_SECRET')),
+            'redirect_uri': GOOGLE_AUTH_REDIRECT_URI,
+            'grant_type': 'authorization_code'
+        }
+        token_req = requests.post(token_endpoint, data)
+        access_token = token_req.json()['access_token']
+        id_token = token_req.json()['id_token']
+
+        # Get user info
+        headers = { 'Authorization': str('Bearer ' + access_token) }
+        info_req = requests.get(userinfo_endpoint, headers=headers)
+
+        user_info = info_req.json()
+
+        first_name = user_info['given_name']
+        last_name  = user_info['family_name']
+        email      = user_info['email']
+        username   = first_name.lower() + '.' + last_name.lower()
+        auth_type  = 'google_oauth'
+    
+        # Create/login user
+        User = get_user_model()
+        try:
+            user = User.objects.get(email=email)
+        except get_user_model().DoesNotExist:
+            user = User.objects.create_user(username, email, first_name=first_name, last_name=last_name, auth_type='google_oauth')
+
+        user_serializer = UserSerializer(user, many=False)
+
+        if user_serializer.data['auth_type'] == 'google_oauth':
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            response = HttpResponseRedirect(CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true')
+            # response['Location'] = CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true'
+            return response
+        else:
+            response = HttpResponse()
+            response['Location'] = CLIENT_APP_URL + '?loggedIn=false'
+            return response
+
 # /api/users/
 class UserList(APIView):
 
     def get(self, request, format=None):
-        User = get_user_model()
+        User            = get_user_model()
         users           = User.objects.all()
         user_serializer = UserSerializer(users, many=True)
         return Response(user_serializer.data)
@@ -101,7 +162,7 @@ class UserList(APIView):
         user = User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name)
         user.save()
 
-        login(request, user)
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
         user_serializer = UserSerializer(user, many=False)
 
@@ -114,10 +175,10 @@ class UserList(APIView):
 # /api/users/:uuid
 class UserDetails(APIView):
     
-    def get_object(self, uuid):
+    def get_object(self, id):
 
         try:
-            return get_user_model().objects.get(uuid=uuid)
+            return get_user_model().objects.get(id=id)
         except get_user_model().DoesNotExist:
             raise Http404
 

@@ -9,4 +9,5 @@ urlpatterns = [
     path('api/', include('api.urls')),
     path('', include('testapp.urls')),
     path('admin/', admin.site.urls),
+    # path('auth/', include('rest_framework_social_oauth2.urls')),
 ]
