@@ -23,6 +23,7 @@ import requests
 
 # GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
 GOOGLE_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/google/'
+FACEBOOK_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/facebook/'
 # CLIENT_APP_URL = 'http://localhost:3000/'
 CLIENT_APP_URL = 'https://lambda-discussion-board-test.herokuapp.com/'
 
@@ -129,7 +130,16 @@ class UserOauthGoogle(APIView):
 # /api/users/oauth/facebook/
 class UserOauthFacebook(APIView):
     def get(self, request, format=None):
-        return Response()
+
+        code = request.query_params.get('code','')
+        
+        # Get the token url and user info url from the discovery document.
+        url = 'https://graph.facebook.com/v3.3/oauth/access_token?client_id=' + str(os.environ.get('FACEBOOK_OAUTH_ID')) + '&redirect_uri=' + FACEBOOK_AUTH_REDIRECT_URI + '&client_secret=' + str(os.environ.get('FACEBOOK_OAUTH_SECRET')) + '&code=' + code
+
+        token_req = requests.requests.get(url)
+        access_token = token_req.json()['access_token']
+
+        return Response(token_req.json())
 
 
 # /api/users/
