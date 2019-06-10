@@ -146,13 +146,29 @@ class UserOauthFacebook(APIView):
         # Get user info
         info_req = requests.get('https://graph.facebook.com/' + str(user_id) + '?fields=first_name,last_name,email&access_token=' + str(access_token))
         
-        # first_name = user_info['first_name']
-        # last_name  = user_info['last_name']
-        # email      = user_info['email']
-        # username   = first_name.lower() + '.' + last_name.lower()
-        # auth_type  = 'facebook_oauth'
+        first_name = user_info['first_name']
+        last_name  = user_info['last_name']
+        email      = user_info['email']
+        username   = first_name.lower() + '.' + last_name.lower()
+        auth_type  = 'facebook_oauth'
 
-        return Response(info_req.json())
+        # Create/login user
+        User = get_user_model()
+        try:
+            user = User.objects.get(email=email)
+        except get_user_model().DoesNotExist:
+            user = User.objects.create_user(username, email, first_name=first_name, last_name=last_name, auth_type='facebook_oauth')
+
+        user_serializer = UserSerializer(user, many=False)
+
+         if user_serializer.data['auth_type'] == 'facebook_oauth':
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            response = HttpResponseRedirect(CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true')
+            return response
+        else:
+            response = HttpResponse()
+            response['Location'] = CLIENT_APP_URL + '?loggedIn=false'
+            return response
 
 
 # /api/users/
