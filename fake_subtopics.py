@@ -13,7 +13,7 @@ def create_subtopics():
     for i in range(len(s)):
         Subtopic.objects.get_or_create(
             name = s[i],
-            owner = User.objects.get(pk=random.randint(969, 1021)))
+            owner = User.objects.get(pk=random.randint(1, 620)))
 
 create_subtopics()
 print('Subtopics created...')

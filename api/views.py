@@ -80,7 +80,7 @@ class UserOauthGoogle(APIView):
     def get(self, request, format=None):
 
         code = request.query_params.get('code','')
-        
+
         # Get the token url and user info url from the discovery document.
         url_req = requests.get('https://accounts.google.com/.well-known/openid-configuration')
         token_endpoint = url_req.json()['token_endpoint']
@@ -109,7 +109,7 @@ class UserOauthGoogle(APIView):
         email      = user_info['email']
         username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
         auth_type  = 'oauth'
-    
+
         # Create/login user
         User = get_user_model()
         try:
@@ -132,7 +132,7 @@ class UserOauthFacebook(APIView):
     def get(self, request, format=None):
 
         code = request.query_params.get('code','')
-        
+
         # Get access token
         url = 'https://graph.facebook.com/v3.3/oauth/access_token?client_id=' + str(os.environ.get('FACEBOOK_OAUTH_ID')) + '&redirect_uri=' + FACEBOOK_AUTH_REDIRECT_URI + '&client_secret=' + str(os.environ.get('FACEBOOK_OAUTH_SECRET')) + '&code=' + code
 
@@ -141,7 +141,7 @@ class UserOauthFacebook(APIView):
 
         # Get user info
         info_req = requests.get('https://graph.facebook.com/me?access_token=' + str(access_token) + '&fields=first_name,last_name,email')
-        
+
         user_info = info_req.json()
 
         first_name = user_info['first_name']
@@ -217,7 +217,7 @@ class UserList(APIView):
 
 # /api/users/:id
 class UserDetails(APIView):
-    
+
     def get_object(self, id):
 
         try:
@@ -250,11 +250,12 @@ class UserDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /api/subtopics/
-class SubtopicList(APIView):
+class SubtopicList(generics.ListCreateAPIView):
 
-    # queryset = Subtopic.objects.all()
-    # serializer_class = SubtopicSerializer
+    queryset = Subtopic.objects.all()
+    serializer_class = SubtopicSerializer
 
+'''
     def get(self, request):
         return Response('hi')
 
@@ -263,7 +264,7 @@ class SubtopicList(APIView):
             return Response('yes')
         else:
             return Response('no')
-
+'''
 # /api/subtopics/:uuid
 class SubtopicDetails(APIView):
     def get_object(self, uuid):

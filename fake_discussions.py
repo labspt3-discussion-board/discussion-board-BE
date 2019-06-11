@@ -18,8 +18,8 @@ def create_discussions(N):
             description = fake.paragraph(nb_sentences=3, variable_nb_sentences=True, ext_word_list=None),
             upvote = random.randint(0, 999),
             downvote = random.randint(0, 999),
-            owner = User.objects.get(pk=random.randint(383, 967)),
-            subtopic = Subtopic.objects.get(pk=random.randint(1, 11))
+            owner = User.objects.get(pk=random.randint(1, 620)),
+            subtopic = Subtopic.objects.get(pk=random.randint(1, 10))
         )
 
 create_discussions(500)
