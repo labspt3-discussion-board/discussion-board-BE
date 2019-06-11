@@ -108,18 +108,18 @@ class UserOauthGoogle(APIView):
         last_name  = user_info['family_name']
         email      = user_info['email']
         username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
-        auth_type  = 'google_oauth'
+        auth_type  = 'oauth'
     
         # Create/login user
         User = get_user_model()
         try:
             user = User.objects.get(email=email)
         except get_user_model().DoesNotExist:
-            user = User.objects.create_user(username, email, first_name=first_name, last_name=last_name, auth_type='google_oauth')
+            user = User.objects.create_user(username, email, first_name=first_name, last_name=last_name, auth_type=auth_type)
 
         user_serializer = UserSerializer(user, many=False)
 
-        if user_serializer.data['auth_type'] == 'google_oauth':
+        if user_serializer.data['auth_type'] == auth_type:
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             response = HttpResponseRedirect(CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true')
             return response
@@ -148,18 +148,18 @@ class UserOauthFacebook(APIView):
         last_name  = user_info['last_name']
         email      = user_info['email']
         username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
-        auth_type  = 'facebook_oauth'
+        auth_type  = 'oauth'
 
         # Create/login user
         User = get_user_model()
         try:
             user = User.objects.get(email=email)
         except get_user_model().DoesNotExist:
-            user = User.objects.create_user(username, email, first_name=first_name, last_name=last_name, auth_type='facebook_oauth')
+            user = User.objects.create_user(username, email, first_name=first_name, last_name=last_name, auth_type=auth_type)
 
         user_serializer = UserSerializer(user, many=False)
 
-        if user_serializer.data['auth_type'] == 'facebook_oauth':
+        if user_serializer.data['auth_type'] == auth_type:
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             response = HttpResponseRedirect(CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true')
             return response
