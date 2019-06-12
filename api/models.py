@@ -84,5 +84,5 @@ class Comments(models.Model):
 
 # Relationships
 class UserToSubtopic(models.Model):
-    user_uuid     = models.IntegerField()
-    subtopic_uuid = models.IntegerField()
+    user     = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    subtopic = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
