@@ -341,10 +341,18 @@ class DiscussionComments(generics.ListAPIView):
     serializer_class = CommentSerializer
     lookup_url_kwarg = 'id'
 
+    def get_object(self, id):
+        try:
+            return Discussion.objects.get(id=id)
+        except Discussion.DoesNotExist:
+            raise Http404
+
     def get_queryset(self):
         id = self.kwargs.get(self.lookup_url_kwarg)
-        comments = Comments.objects.filter(discussion_id=id)
-        return comments
+        discussion = self.get_object(id)
+        if discussion:
+            comments = Comments.objects.filter(discussion_id=id)
+            return comments
 
 # /api/topdiscussions/
 class TopDiscussions(generics.ListAPIView):
