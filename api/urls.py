@@ -15,6 +15,7 @@ urlpatterns = [
     path('subtopics/<uuid>/'   ,views.SubtopicDetails.as_view() ,name='subtopic details'),
     path('discussions/'   ,views.DiscussionList.as_view() ,name='discussion list'),
     path('discussions/<id>/'   ,views.DiscussionDetails.as_view() ,name='discussion details'),
+    path('discussions/<id>/comments/'   ,views.DiscussionComments.as_view() ,name='discussion comments'),
     path('topdiscussions/'   ,views.TopDiscussions.as_view() ,name='top ten discussions'),
     path('comments/'   ,views.CommentList.as_view() ,name='comments list'),
     path('comments/<id>/'   ,views.CommentDetails.as_view() ,name='comment details'),

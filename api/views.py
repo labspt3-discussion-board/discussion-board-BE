@@ -336,6 +336,16 @@ class DiscussionDetails(APIView):
         discussion.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+# /api/discussions/id/comments
+class DiscussionComments(generics.ListAPIView):
+    serializer_class = CommentSerializer
+    lookup_url_kwarg = 'id'
+
+    def get_queryset(self):
+        id = self.kwargs.get(self.lookup_url_kwarg)
+        comments = Comments.objects.filter(discussion_id=id)
+        return comments
+
 # /api/topdiscussions/
 class TopDiscussions(generics.ListAPIView):
     queryset = Discussion.objects.annotate(Count('upvote')).order_by('-upvote')
