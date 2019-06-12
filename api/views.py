@@ -304,6 +304,22 @@ class SubtopicDetails(APIView):
 
 # /api/subtopics/id/users
 # /api/subtopics/id/discussions
+class SubtopicDiscussions(generics.ListAPIView):
+    serializer_class = DiscussionSerializer
+    lookup_url_kwarg = 'id'
+
+    def get_object(self, id):
+        try:
+            return Subtopic.objects.get(id=id)
+        except Subtopic.DoesNotExist:
+            raise Http404
+
+    def get_queryset(self):
+        id = self.kwargs.get(self.lookup_url_kwarg)
+        subtopic = self.get_object(id)
+        if subtopic:
+            discussion = Discussion.objects.filter(subtopic=id)
+            return discussion
 
 # /api/discussions/
 class DiscussionList(generics.ListCreateAPIView):
