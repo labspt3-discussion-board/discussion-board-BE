@@ -249,6 +249,10 @@ class UserDetails(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+# /api/users/id/subtopics
+# /api/users/id/discussions
+# /api/users/id/comments
+
 # /api/subtopics/
 class SubtopicList(generics.ListCreateAPIView):
 
@@ -297,6 +301,9 @@ class SubtopicDetails(APIView):
         subtopic = self.get_object(uuid)
         subtopic.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# /api/subtopics/id/users
+# /api/subtopics/id/discussions
 
 # /api/discussions/
 class DiscussionList(generics.ListCreateAPIView):
