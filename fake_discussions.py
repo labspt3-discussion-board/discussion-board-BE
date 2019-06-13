@@ -19,7 +19,7 @@ def create_discussions(N):
             upvote = random.randint(0, 999),
             downvote = random.randint(0, 999),
             owner = User.objects.get(pk=random.randint(1, 620)),
-            subtopic = Subtopic.objects.get(pk=random.randint(1, 10))
+            subforum = Subforum.objects.get(pk=random.randint(1, 10))
         )
 
 create_discussions(500)

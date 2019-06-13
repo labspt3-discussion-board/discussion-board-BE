@@ -59,7 +59,6 @@ class User(AbstractBaseUser):
         return self.is_superuser
 
 class Subforum(models.Model):
-
     name       = models.CharField(max_length=20)
     private    = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

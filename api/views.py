@@ -250,10 +250,12 @@ class UserDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /api/subforum/
-class SubforumList(APIView):
+class SubforumList(generics.ListCreateAPIView):
 
-    # queryset = Subforum.objects.all()
-    # serializer_class = SubforumSerializer
+    queryset = Subforum.objects.all()
+    serializer_class = SubforumSerializer
+
+    '''
     def get(self, request):
         return Response('hi')
 
@@ -262,6 +264,7 @@ class SubforumList(APIView):
             return Response('yes')
         else:
             return Response('no')
+    '''
 
 # /api/Subforums/:uuid
 class SubforumDetails(APIView):
@@ -298,7 +301,7 @@ class SubforumDetails(APIView):
 
 # /api/subtopics/id/users
 # /api/subtopics/id/discussions
-class SubfourmDiscussions(generics.ListAPIView):
+class SubforumDiscussions(generics.ListAPIView):
     serializer_class = DiscussionSerializer
     lookup_url_kwarg = 'id'
 
