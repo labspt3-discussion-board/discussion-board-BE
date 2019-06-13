@@ -11,8 +11,8 @@ from django.contrib.auth.models   import User
 from django.contrib.auth          import get_user_model
 from django.db.models             import Count
 from django.contrib.auth          import get_user_model, authenticate, login, logout
-from api.models                   import Subforum, Discussion, Comments
-from api.serializers              import UserSerializer, SubforumSerializer, DiscussionSerializer, CommentSerializer
+from api.models                   import Subforum, Discussion, Comments, UserToSubforum
+from api.serializers              import UserSerializer, SubforumSerializer, DiscussionSerializer, CommentSerializer, UserToSubforumSerializer
 from django.conf                  import settings
 from validate_email               import validate_email
 from django.middleware.csrf       import get_token
@@ -416,3 +416,7 @@ class CommentDetails(APIView):
         comment = self.get_object(id)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UserToSubforumList(generics.ListCreateAPIView):
+    queryset = UserToSubforum.objects.all()
+    serializer_class = UserToSubforumSerializer

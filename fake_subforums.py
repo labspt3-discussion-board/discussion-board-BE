@@ -13,7 +13,7 @@ def create_subforums():
     for i in range(len(s)):
         Subforum.objects.get_or_create(
             name = s[i],
-            owner = User.objects.get(pk=random.randint(1, 620)))
+            owner = User.objects.get(pk=random.randint(1, 10)))
 
 create_subforums()
 print('Subforums created...')

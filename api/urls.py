@@ -20,4 +20,5 @@ urlpatterns = [
     path('topdiscussions/'   ,views.TopDiscussions.as_view() ,name='top ten discussions'),
     path('comments/'   ,views.CommentList.as_view() ,name='comments list'),
     path('comments/<id>/'   ,views.CommentDetails.as_view() ,name='comment details'),
+    path('usertosubforum/'   ,views.UserToSubforumList.as_view() ,name='User to Subforum List'),
 ]
