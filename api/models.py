@@ -36,8 +36,6 @@ class UserManager(BaseUserManager):
         return user
 
 
-
-
 class User(AbstractBaseUser):
     username     = models.CharField(max_length=16, null=False, unique=True, default='')
     email        = models.EmailField(verbose_name='email address', max_length=255, null=False, unique=True)
@@ -60,12 +58,12 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return self.is_superuser
 
+class Subforum(models.Model):
 
-class Subtopic(models.Model):
     name       = models.CharField(max_length=20)
     private    = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    owner      = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='subtopic', on_delete=models.CASCADE)
+    owner      = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='subforum', on_delete=models.CASCADE)
 
 class Discussion(models.Model):
     title       = models.CharField(max_length=20)
@@ -74,7 +72,7 @@ class Discussion(models.Model):
     downvote    = models.IntegerField(default=0)
     created_at  = models.DateTimeField(auto_now_add=True)
     owner       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    subtopic    = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
+    subforum    = models.ForeignKey(Subforum, on_delete=models.CASCADE)
 
 class Comments(models.Model):
     text          = models.TextField(max_length=200)
@@ -83,6 +81,6 @@ class Comments(models.Model):
     discussion_id = models.ForeignKey(Discussion, related_name='comments', on_delete=models.CASCADE)
 
 # Relationships
-class UserToSubtopic(models.Model):
+class UserToSubforum(models.Model):
     user     = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    subtopic = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
+    subtopic = models.ForeignKey(Subforum, on_delete=models.CASCADE)

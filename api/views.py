@@ -11,8 +11,8 @@ from django.contrib.auth.models   import User
 from django.contrib.auth          import get_user_model
 from django.db.models             import Count
 from django.contrib.auth          import get_user_model, authenticate, login, logout
-from api.models                   import Subtopic, Discussion, Comments
-from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer, CommentSerializer
+from api.models                   import Subforum, Discussion, Comments
+from api.serializers              import UserSerializer, SubforumSerializer, DiscussionSerializer, CommentSerializer
 from django.conf                  import settings
 from validate_email               import validate_email
 from django.middleware.csrf       import get_token
@@ -22,11 +22,11 @@ import json
 import requests
 import random
 
-# GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
-GOOGLE_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/google/'
+GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
+# GOOGLE_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/google/'
 FACEBOOK_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/facebook/'
-# CLIENT_APP_URL = 'http://localhost:3000/'
-CLIENT_APP_URL = 'https://lambda-discussion-board-test.herokuapp.com/'
+CLIENT_APP_URL = 'http://localhost:3000/'
+# CLIENT_APP_URL = 'https://lambda-discussion-board-test.herokuapp.com/'
 
 # /api/
 class Index(APIView):
@@ -249,17 +249,11 @@ class UserDetails(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# /api/users/id/subtopics
-# /api/users/id/discussions
-# /api/users/id/comments
+# /api/subforum/
+class SubforumList(APIView):
 
-# /api/subtopics/
-class SubtopicList(generics.ListCreateAPIView):
-
-    queryset = Subtopic.objects.all()
-    serializer_class = SubtopicSerializer
-
-'''
+    # queryset = Subforum.objects.all()
+    # serializer_class = SubforumSerializer
     def get(self, request):
         return Response('hi')
 
@@ -268,56 +262,56 @@ class SubtopicList(generics.ListCreateAPIView):
             return Response('yes')
         else:
             return Response('no')
-'''
-# /api/subtopics/:uuid
-class SubtopicDetails(APIView):
-    def get_object(self, uuid):
+
+# /api/Subforums/:uuid
+class SubforumDetails(APIView):
+    def get_object(self, id):
 
         try:
-            return Subtopic.objects.get(uuid=uuid)
-        except Subtopic.DoesNotExist:
+            return Subforum.objects.get(uuid=uuid)
+        except Subforum.DoesNotExist:
             raise Http404
 
     def get(self, request, uuid, format=None):
 
-        subtopic = self.get_object(uuid)
-        subtopic_serializer = SubtopicSerializer(subtopic)
-        return Response(subtopic_serializer.data)
+        Subforum = self.get_object(id)
+        Subforum_serializer = SubforumSerializer(Subforum)
+        return Response(Subforum_serializer.data)
 
-    def put(self, request, uuid, format=None):
+    def put(self, request, id, format=None):
 
         data = JSONParser().parse(request)
-        subtopic = self.get_object(uuid)
-        subtopic_serializer = SubtopicSerializer(subtopic, data=data)
+        Subforum = self.get_object(uuid)
+        Subforum_serializer = SubforumSerializer(Subforum, data=data)
 
-        if subtopic_serializer.is_valid():
-            subtopic_serializer.save()
-            return Response(subtopic_serializer.data)
+        if Subforum_serializer.is_valid():
+            Subforum_serializer.save()
+            return Response(Subforum_serializer.data)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, uuid, format=None):
+    def delete(self, request, id, format=None):
 
-        subtopic = self.get_object(uuid)
-        subtopic.delete()
+        Subforum = self.get_object(id)
+        Subforum.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /api/subtopics/id/users
 # /api/subtopics/id/discussions
-class SubtopicDiscussions(generics.ListAPIView):
+class SubfourmDiscussions(generics.ListAPIView):
     serializer_class = DiscussionSerializer
     lookup_url_kwarg = 'id'
 
     def get_object(self, id):
         try:
-            return Subtopic.objects.get(id=id)
-        except Subtopic.DoesNotExist:
+            return Subforum.objects.get(id=id)
+        except Subforum.DoesNotExist:
             raise Http404
 
     def get_queryset(self):
         id = self.kwargs.get(self.lookup_url_kwarg)
-        subtopic = self.get_object(id)
-        if subtopic:
+        subforum = self.get_object(id)
+        if subforum:
             discussion = Discussion.objects.filter(subtopic=id)
             return discussion
 
