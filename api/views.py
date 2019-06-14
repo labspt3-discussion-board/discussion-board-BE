@@ -254,30 +254,9 @@ class UserDetails(APIView):
 # /api/subforums/
 class SubforumList(APIView):
 
-    queryset = Subforum.objects.all()
-    serializer_class = SubforumSerializer
-
-    '''
-    def get(self, request):
-        if request.user.is_authenticated:
-            return Response('yes')
-        else:
-            return Response('no')
-
-    def post(self, request, format=None):
-
-
-
-
-        # subforum = Subforum(name='test', private=False)
-        # subforum.save()
-
-
-        if request.user.is_authenticated:
-            return Response('yes')
-        else:
-            return Response('no')
-    '''
+    def get(self, request, format=None):
+        return Response(request.COOKIES)
+ 
 
 # /api/Subforums/:uuid
 class SubforumDetails(APIView):
