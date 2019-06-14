@@ -100,13 +100,13 @@ class UserOauthGoogle(APIView):
         access_token = token_req.json()['access_token']
         id_token = token_req.json()['id_token']
 
-        return Response(token_req.json())
-
         # Get user info
         headers = { 'Authorization': str('Bearer ' + access_token) }
         info_req = requests.get(userinfo_endpoint, headers=headers)
 
         user_info = info_req.json()
+
+        return Response(user_info)
 
         first_name = user_info['given_name']
         last_name  = user_info['family_name']
