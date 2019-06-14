@@ -53,7 +53,7 @@ CSRF_COOKIE_SAMESITE = None
 # CSRF_COOKIE_DOMAIN = '.herokuapp.com/'
 SESSION_COOKIE_HTTPONLY = False
 
-CSRF_TRUSTED_ORIGINS = ['lambda-discussion-board-test.herokuapp.com/', 'localhost:3000/']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Rest Framework global settings
