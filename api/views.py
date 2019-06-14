@@ -22,11 +22,11 @@ import json
 import requests
 import random
 
-GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
-# GOOGLE_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/google/'
+# GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
+GOOGLE_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/google/'
 FACEBOOK_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/facebook/'
-CLIENT_APP_URL = 'http://localhost:3000/'
-# CLIENT_APP_URL = 'https://lambda-discussion-board-test.herokuapp.com/'
+# CLIENT_APP_URL = 'http://localhost:3000/'
+CLIENT_APP_URL = 'https://lambda-discussion-board-test.herokuapp.com/'
 
 # /api/
 class Index(APIView):
@@ -60,6 +60,8 @@ class UserLogin(APIView):
         password = data['password']
 
         user = authenticate(username=email, password=password)
+
+        
 
         if user is not None:
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
@@ -249,17 +251,28 @@ class UserDetails(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# /api/subforum/
-class SubforumList(generics.ListCreateAPIView):
+# /api/subforums/
+class SubforumList(APIView):
 
     queryset = Subforum.objects.all()
     serializer_class = SubforumSerializer
 
     '''
     def get(self, request):
-        return Response('hi')
+        if request.user.is_authenticated:
+            return Response('yes')
+        else:
+            return Response('no')
 
-    def post(self, request):
+    def post(self, request, format=None):
+
+
+
+
+        # subforum = Subforum(name='test', private=False)
+        # subforum.save()
+
+
         if request.user.is_authenticated:
             return Response('yes')
         else:

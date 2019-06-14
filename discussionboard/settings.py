@@ -47,13 +47,15 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-SESSION_COOKIE_SAMESITE = None
+# SESSION_COOKIE_SAMESITE = None
 # SESSION_COOKIE_DOMAIN = 'lambda-discussion-board-test.herokuapp.com/'
-SESSION_COOKIE_HTTPONLY = False
+# SESSION_COOKIE_HTTPONLY = False
 
 # Rest Framework global settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASS': [
+        # 'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.AllowAny',
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
