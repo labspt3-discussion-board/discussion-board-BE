@@ -106,8 +106,6 @@ class UserOauthGoogle(APIView):
 
         user_info = info_req.json()
 
-        return Response(user_info)
-
         first_name = user_info['given_name']
         last_name  = user_info['family_name']
         email      = user_info['email']
