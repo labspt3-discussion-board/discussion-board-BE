@@ -52,6 +52,8 @@ CSRF_COOKIE_SAMESITE = None
 # SESSION_COOKIE_DOMAIN = 'lambda-discussion-board-test.herokuapp.com/'
 SESSION_COOKIE_HTTPONLY = False
 
+CSRF_TRUSTED_ORIGINS = ['lambda-discussion-board-test.herokuapp.com/']
+
 
 # Rest Framework global settings
 REST_FRAMEWORK = {
