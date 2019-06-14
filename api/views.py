@@ -11,8 +11,8 @@ from django.contrib.auth.models   import User
 from django.contrib.auth          import get_user_model
 from django.db.models             import Count
 from django.contrib.auth          import get_user_model, authenticate, login, logout
-from api.models                   import Subtopic, Discussion, Comments
-from api.serializers              import UserSerializer, SubtopicSerializer, DiscussionSerializer, CommentSerializer
+from api.models                   import Subforum, Discussion, Comments, UserToSubforum
+from api.serializers              import UserSerializer, SubforumSerializer, DiscussionSerializer, CommentSerializer, UserToSubforumSerializer
 from django.conf                  import settings
 from validate_email               import validate_email
 from django.middleware.csrf       import get_token
@@ -61,6 +61,8 @@ class UserLogin(APIView):
 
         user = authenticate(username=email, password=password)
 
+        
+
         if user is not None:
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             user_serializer = UserSerializer(user, many=False)
@@ -83,7 +85,6 @@ class UserOauthGoogle(APIView):
 
         return HttpResponse(code)
 
-        
         # Get the token url and user info url from the discovery document.
         url_req = requests.get('https://accounts.google.com/.well-known/openid-configuration')
         token_endpoint = url_req.json()['token_endpoint']
@@ -112,7 +113,7 @@ class UserOauthGoogle(APIView):
         email      = user_info['email']
         username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
         auth_type  = 'oauth'
-    
+
         # Create/login user
         User = get_user_model()
         try:
@@ -135,7 +136,7 @@ class UserOauthFacebook(APIView):
     def get(self, request, format=None):
 
         code = request.query_params.get('code','')
-        
+
         # Get access token
         url = 'https://graph.facebook.com/v3.3/oauth/access_token?client_id=' + str(os.environ.get('FACEBOOK_OAUTH_ID')) + '&redirect_uri=' + FACEBOOK_AUTH_REDIRECT_URI + '&client_secret=' + str(os.environ.get('FACEBOOK_OAUTH_SECRET')) + '&code=' + code
 
@@ -144,7 +145,7 @@ class UserOauthFacebook(APIView):
 
         # Get user info
         info_req = requests.get('https://graph.facebook.com/me?access_token=' + str(access_token) + '&fields=first_name,last_name,email')
-        
+
         user_info = info_req.json()
 
         first_name = user_info['first_name']
@@ -220,7 +221,7 @@ class UserList(APIView):
 
 # /api/users/:id
 class UserDetails(APIView):
-    
+
     def get_object(self, id):
 
         try:
@@ -252,53 +253,85 @@ class UserDetails(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# /api/subtopics/
-class SubtopicList(APIView):
+# /api/subforums/
+class SubforumList(APIView):
 
-    # queryset = Subtopic.objects.all()
-    # serializer_class = SubtopicSerializer
+    queryset = Subforum.objects.all()
+    serializer_class = SubforumSerializer
 
+    '''
     def get(self, request):
-        return Response('hi')
-
-    def post(self, request):
         if request.user.is_authenticated:
             return Response('yes')
         else:
             return Response('no')
 
-# /api/subtopics/:uuid
-class SubtopicDetails(APIView):
-    def get_object(self, uuid):
+    def post(self, request, format=None):
+
+
+
+
+        # subforum = Subforum(name='test', private=False)
+        # subforum.save()
+
+
+        if request.user.is_authenticated:
+            return Response('yes')
+        else:
+            return Response('no')
+    '''
+
+# /api/Subforums/:uuid
+class SubforumDetails(APIView):
+    def get_object(self, id):
 
         try:
-            return Subtopic.objects.get(uuid=uuid)
-        except Subtopic.DoesNotExist:
+            return Subforum.objects.get(uuid=uuid)
+        except Subforum.DoesNotExist:
             raise Http404
 
     def get(self, request, uuid, format=None):
 
-        subtopic = self.get_object(uuid)
-        subtopic_serializer = SubtopicSerializer(subtopic)
-        return Response(subtopic_serializer.data)
+        Subforum = self.get_object(id)
+        Subforum_serializer = SubforumSerializer(Subforum)
+        return Response(Subforum_serializer.data)
 
-    def put(self, request, uuid, format=None):
+    def put(self, request, id, format=None):
 
         data = JSONParser().parse(request)
-        subtopic = self.get_object(uuid)
-        subtopic_serializer = SubtopicSerializer(subtopic, data=data)
+        Subforum = self.get_object(uuid)
+        Subforum_serializer = SubforumSerializer(Subforum, data=data)
 
-        if subtopic_serializer.is_valid():
-            subtopic_serializer.save()
-            return Response(subtopic_serializer.data)
+        if Subforum_serializer.is_valid():
+            Subforum_serializer.save()
+            return Response(Subforum_serializer.data)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, uuid, format=None):
+    def delete(self, request, id, format=None):
 
-        subtopic = self.get_object(uuid)
-        subtopic.delete()
+        Subforum = self.get_object(id)
+        Subforum.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# /api/subtopics/id/users
+# /api/subtopics/id/discussions
+class SubforumDiscussions(generics.ListAPIView):
+    serializer_class = DiscussionSerializer
+    lookup_url_kwarg = 'id'
+
+    def get_object(self, id):
+        try:
+            return Subforum.objects.get(id=id)
+        except Subforum.DoesNotExist:
+            raise Http404
+
+    def get_queryset(self):
+        id = self.kwargs.get(self.lookup_url_kwarg)
+        subforum = self.get_object(id)
+        if subforum:
+            discussion = Discussion.objects.filter(subtopic=id)
+            return discussion
 
 # /api/discussions/
 class DiscussionList(generics.ListCreateAPIView):
@@ -338,9 +371,27 @@ class DiscussionDetails(APIView):
         discussion.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# /api/discussions/top/
+# /api/discussions/id/comments
+class DiscussionComments(generics.ListAPIView):
+    serializer_class = CommentSerializer
+    lookup_url_kwarg = 'id'
+
+    def get_object(self, id):
+        try:
+            return Discussion.objects.get(id=id)
+        except Discussion.DoesNotExist:
+            raise Http404
+
+    def get_queryset(self):
+        id = self.kwargs.get(self.lookup_url_kwarg)
+        discussion = self.get_object(id)
+        if discussion:
+            comments = Comments.objects.filter(discussion_id=id)
+            return comments
+
+# /api/topdiscussions/
 class TopDiscussions(generics.ListAPIView):
-    queryset = Discussion.objects.annotate(Count('upvote')).order_by('-upvote')[:10]
+    queryset = Discussion.objects.annotate(Count('upvote')).order_by('-upvote')
     serializer_class = DiscussionSerializer
 
 # /api/comments/
@@ -380,3 +431,7 @@ class CommentDetails(APIView):
         comment = self.get_object(id)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class UserToSubforumList(generics.ListCreateAPIView):
+    queryset = UserToSubforum.objects.all()
+    serializer_class = UserToSubforumSerializer
