@@ -6,14 +6,14 @@ django.setup()
 
 import random
 
-from api.models import User, Subtopic, Discussion, Comments
+from api.models import User, Subforum, Discussion, Comments
 
-def create_subtopics():
+def create_subforums():
     s = ['memes','news','pics','funny','gaming','worldnews','todayilearned','aww','politics','mildlyinteresting']
     for i in range(len(s)):
-        Subtopic.objects.get_or_create(
+        Subforum.objects.get_or_create(
             name = s[i],
-            owner = User.objects.get(pk=random.randint(969, 1021)))
+            owner = User.objects.get(pk=random.randint(1, 10)))
 
-create_subtopics()
-print('Subtopics created...')
+create_subforums()
+print('Subforums created...')

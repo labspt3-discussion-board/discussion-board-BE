@@ -35,8 +35,8 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-class User(AbstractBaseUser):
 
+class User(AbstractBaseUser):
     username     = models.CharField(max_length=16, null=False, unique=True, default='')
     email        = models.EmailField(verbose_name='email address', max_length=255, null=False, unique=True)
     first_name   = models.CharField(max_length=200, default='')
@@ -59,7 +59,6 @@ class User(AbstractBaseUser):
         return self.is_superuser
 
 class Subforum(models.Model):
-
     name       = models.CharField(max_length=20)
     private    = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -82,5 +81,5 @@ class Comments(models.Model):
 
 # Relationships
 class UserToSubforum(models.Model):
-    user_uuid     = models.IntegerField()
-    Subforum_uuid = models.IntegerField()
+    user     = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    subtopic = models.ForeignKey(Subforum, on_delete=models.CASCADE)
