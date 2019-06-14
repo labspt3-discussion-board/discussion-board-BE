@@ -61,6 +61,8 @@ class UserLogin(APIView):
 
         user = authenticate(username=email, password=password)
 
+        
+
         if user is not None:
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             user_serializer = UserSerializer(user, many=False)
@@ -249,16 +251,27 @@ class UserDetails(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# /api/subforum/
+# /api/subforums/
 class SubforumList(APIView):
 
     # queryset = Subforum.objects.all()
     # serializer_class = SubforumSerializer
 
     def get(self, request):
-        return Response('hi')
+        if request.user.is_authenticated:
+            return Response('yes')
+        else:
+            return Response('no')
 
-    def post(self, request):
+    def post(self, request, format=None):
+
+
+
+
+        # subforum = Subforum(name='test', private=False)
+        # subforum.save()
+
+
         if request.user.is_authenticated:
             return Response('yes')
         else:
