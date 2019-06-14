@@ -83,8 +83,6 @@ class UserOauthGoogle(APIView):
 
         code = request.query_params.get('code','')
 
-        return HttpResponse(code)
-
         # Get the token url and user info url from the discovery document.
         url_req = requests.get('https://accounts.google.com/.well-known/openid-configuration')
         token_endpoint = url_req.json()['token_endpoint']
