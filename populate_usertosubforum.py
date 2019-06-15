@@ -10,9 +10,12 @@ from api.models import User, Subforum, UserToSubforum
 
 def populate_table(N):
     for _ in range(N):
+        r = random.randint(1, 696)
+        print(r)
         row = UserToSubforum.objects.get_or_create(
-            user = User.objects.get(pk=random.randint(1, 564)),
-            subtopic = Subforum.objects.get(pk=random.randint(15, 24))
+            user = User.objects.get(pk=r),
+            username = User.objects.get(pk=r),
+            subtopic = Subforum.objects.get(pk=random.randint(1, 10))
         )
 
 populate_table(250)

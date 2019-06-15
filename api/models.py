@@ -82,4 +82,5 @@ class Comments(models.Model):
 # Relationships
 class UserToSubforum(models.Model):
     user     = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    username = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='username', db_column='username', related_name='member', on_delete=models.CASCADE)
     subtopic = models.ForeignKey(Subforum, on_delete=models.CASCADE)

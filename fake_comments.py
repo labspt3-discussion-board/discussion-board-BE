@@ -15,8 +15,8 @@ def create_comments(N):
     for _ in range(N):
         newcomments = Comments.objects.get_or_create(
             text = fake.paragraph(nb_sentences=3, variable_nb_sentences=True, ext_word_list=None),
-            owner = User.objects.get(pk=random.randint(1, 564)),
-            discussion_id = Discussion.objects.get(pk=random.randint(1, 959))
+            owner = User.objects.get(pk=random.randint(1, 696)),
+            discussion_id = Discussion.objects.get(pk=random.randint(1, 741))
         )
 
 create_comments(1500)
