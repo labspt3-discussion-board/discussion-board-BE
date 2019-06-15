@@ -32,13 +32,13 @@ APPEND_SLASH=False
 
 # change from cors allow all to this and add front end application
 CORS_ORIGIN_WHITELIST = [
-    "https://lambda-discussion-board.herokuapp.com",
+    # "https://lambda-discussion-board.herokuapp.com",
     "https://lambda-discussion-board-test.herokuapp.com",
     # "https://sub.example.com",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    # "http://localhost:8000",
+    # "http://127.0.0.1:8000",
+    # "http://localhost:3000",
+    # "http://127.0.0.1:3000"
 ]
 
 from corsheaders.defaults import default_headers
