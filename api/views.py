@@ -262,14 +262,11 @@ class UserOauthFacebook(APIView):
         last_name  = user_info['last_name']
         email      = user_info['email']
         username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
+        avatar_img = user_info['picture']['data']['url']
         auth_type  = 'oauth'
 
         # Get avatar image.505392740000217
-        pic_req = requests.get('https://graph.facebook.com/' + user_id + '/picture')
-        # avatar_img = pic_req.json()
-
-
-        return Response(user_info)
+        # pic_req = requests.get('https://graph.facebook.com/' + user_id + '/picture')
 
         # Create/login user
         User = get_user_model()
@@ -278,10 +275,12 @@ class UserOauthFacebook(APIView):
         except get_user_model().DoesNotExist:
             user = User.objects.create_user(username, email, first_name=first_name, last_name=last_name, auth_type=auth_type)
 
+        token, created = Token.objects.get_or_create(user=user)
+
         user_serializer = UserSerializer(user, many=False)
 
         if user_serializer.data['auth_type'] == auth_type:
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            response = HttpResponseRedirect(CLIENT_APP_URL + '?token=' + str(token.key) + '&loggedIn=true&avatarImg=' + str(avatar_img))
             response = HttpResponseRedirect(CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true')
             return response
         else:
