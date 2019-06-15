@@ -281,7 +281,6 @@ class UserOauthFacebook(APIView):
 
         if user_serializer.data['auth_type'] == auth_type:
             response = HttpResponseRedirect(CLIENT_APP_URL + '?token=' + str(token.key) + '&loggedIn=true&avatarImg=' + str(avatar_img))
-            response = HttpResponseRedirect(CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true')
             return response
         else:
             response = HttpResponseRedirect(CLIENT_APP_URL + '?loggedIn=false')
