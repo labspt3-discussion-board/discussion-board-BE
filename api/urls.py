@@ -7,7 +7,6 @@ urlpatterns = [
     path('users/'                ,views.UserList.as_view()    ,name='users'       ),
     # path('users/<uuid>/'       ,views.UserDetails.as_view() ,name='user details'),
     path('users/login/'          ,views.UserLogin.as_view()   ,name='login'       ),
-    # path('users/login/'        ,views.UserLogin.as_view()   ,name='login'       ),
     path('users/logout/'         ,views.UserLogout.as_view()  ,name='logout'      ),
     path('users/login/check/'    ,views.UserLoginCheck.as_view() ,name='login check'),
     path('users/oauth/google/'   ,views.UserOauthGoogle.as_view() ,name='Google oauth login'),

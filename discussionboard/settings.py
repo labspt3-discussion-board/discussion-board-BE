@@ -46,12 +46,12 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-CSRFToken",
 ]
 
-CORS_ALLOW_CREDENTIALS = True
-SESSION_COOKIE_SAMESITE = None
-CSRF_COOKIE_SAMESITE = None
+# CORS_ALLOW_CREDENTIALS = True
+# SESSION_COOKIE_SAMESITE = None
+# CSRF_COOKIE_SAMESITE = None
 # SESSION_COOKIE_DOMAIN = '.herokuapp.com'
 # CSRF_COOKIE_DOMAIN = '.herokuapp.com'
-SESSION_COOKIE_HTTPONLY = False
+# SESSION_COOKIE_HTTPONLY = False
 
 # CSRF_TRUSTED_ORIGINS = ['lambda-discussion-board-test.herokuapp.com/', 'localhost:3000/']
 
