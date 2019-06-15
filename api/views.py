@@ -68,6 +68,7 @@ class UserLoginCheck(APIView):
             }
             return Response(data)
 
+# /api/users/login/
 class UserLogin(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -104,6 +105,75 @@ class UserLogin(ObtainAuthToken):
             return Response({'Error': 'Invalid Credentials'})
 
         # serializer.is_valid(raise_exception=True)
+
+# /api/users/register/
+class UserRegister(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+
+        data = JSONParser().parse(request)
+        User = get_user_model()
+
+        # Validate username
+        username = ''
+        if data['username'] is not None:
+            username = data['username']
+        else:
+            return Response('Missing username property')
+
+        # Validate email
+        email = ''
+        if data['email'] is not None:
+            email = data['email']
+            if validate_email(email) is not True:
+                return Response('Invalid email')
+        else:
+            return Response('Missing email property')
+
+        email      = data['email']
+        password   = data['password']
+        first_name = data['firstName']
+        last_name  = data['lastName']
+
+        # Create user
+        user = User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name)
+        user.save()
+
+        data = {
+            "username": email,
+            "password": password
+        }
+
+        serializer = self.serializer_class(data=data, context={'request': request})
+
+        if serializer.is_valid():
+
+            # Get token and user
+            user = serializer.validated_data['user']
+            token, created = Token.objects.get_or_create(user=user)
+            User = get_user_model()
+
+            # Get user data
+            user            = User.objects.get(id=user.pk)
+            user_serializer = UserSerializer(user, many=False)
+            info            = user_serializer.data
+
+            data = {
+                'user': {
+                    'id':         info['id'],
+                    'username':   info['username'],
+                    'email':      info['email'],
+                    'first_name': info['first_name'],
+                    'last_name':  info['last_name'],
+                    'premium':    info['premium'],
+                    'created_at': info['created_at'],
+                    'subforums':  info['subforums'],
+                },
+                'token': token.key,
+            }
+
+            return Response(data)
+        else:
+            return Response({'Error': 'There was an error'})
 
 # /api/users/logout/
 class UserLogout(APIView):
@@ -214,45 +284,6 @@ class UserList(APIView):
         users           = User.objects.all()
         user_serializer = UserSerializer(users, many=True)
         return Response(user_serializer.data)
-
-    def post(self, request, format=None):
-        data = JSONParser().parse(request)
-        User = get_user_model()
-
-        # Validate username
-        username = ''
-        if data['username'] is not None:
-            username = data['username']
-            # return Response('Exists')
-        else:
-            return Response('Missing username property')
-
-        # Validate email
-        email = ''
-        if data['email'] is not None:
-            email = data['email']
-            if validate_email(email) is not True:
-                return Response('Invalid email')
-        else:
-            return Response('Missing email property')
-
-        email      = data['email']
-        password   = data['password']
-        first_name = data['firstName']
-        last_name  = data['lastName']
-
-        user = User.objects.create_user(username, email, password, first_name=first_name, last_name=last_name)
-        user.save()
-
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-
-        user_serializer = UserSerializer(user, many=False)
-
-        loggedIn = False
-        if request.user.is_authenticated:
-            loggedIn = True
-
-        return Response((user_serializer.data, { "loggedIn": loggedIn }))
 
 # /api/users/:id
 class UserDetails(APIView):
