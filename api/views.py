@@ -253,7 +253,7 @@ class UserOauthFacebook(APIView):
         access_token = token_req.json()['access_token']
 
         # Get user info
-        info_req = requests.get('https://graph.facebook.com/me?access_token=' + str(access_token) + '&fields=first_name,last_name,email')
+        info_req = requests.get('https://graph.facebook.com/me?access_token=' + str(access_token) + '&fields=first_name,last_name,email,picture.type(small)')
 
         user_info = info_req.json()
 
@@ -264,7 +264,7 @@ class UserOauthFacebook(APIView):
         username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
         auth_type  = 'oauth'
 
-        # Get avatar image.
+        # Get avatar image.505392740000217
         pic_req = requests.get('https://graph.facebook.com/' + user_id + '/picture')
         # avatar_img = pic_req.json()
 
