@@ -1,26 +1,31 @@
-from rest_framework               import status
-from rest_framework.parsers       import JSONParser
-from rest_framework.views         import APIView
-from rest_framework.response      import Response
-from rest_framework               import generics
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts             import render
-from django.http                  import HttpResponse, JsonResponse, Http404, HttpResponseRedirect
-from django.core                  import serializers
-from django.contrib.auth.models   import User
-from django.contrib.auth          import get_user_model
-from django.db.models             import Count
-from django.contrib.auth          import get_user_model, authenticate, login, logout
-from api.models                   import Subforum, Discussion, Comments, UserToSubforum
-from api.serializers              import UserSerializer, SubforumSerializer, DiscussionSerializer, CommentSerializer, UserToSubforumSerializer
-from django.conf                  import settings
-from validate_email               import validate_email
-from django.middleware.csrf       import get_token
-from dotenv                       import load_dotenv
+
+# region
+from rest_framework                  import status
+from rest_framework.parsers          import JSONParser
+from rest_framework.views            import APIView
+from rest_framework.response         import Response
+from rest_framework                  import generics
+from django.views.decorators.csrf    import csrf_exempt
+from django.shortcuts                import render
+from django.http                     import HttpResponse, JsonResponse, Http404, HttpResponseRedirect
+from django.core                     import serializers
+from django.contrib.auth.models      import User
+from django.contrib.auth             import get_user_model
+from django.db.models                import Count
+from django.contrib.auth             import get_user_model, authenticate, login, logout
+from api.models                      import Subforum, Discussion, Comments, UserToSubforum
+from api.serializers                 import UserSerializer, SubforumSerializer, DiscussionSerializer, CommentSerializer, UserToSubforumSerializer
+from django.conf                     import settings
+from validate_email                  import validate_email
+from django.middleware.csrf          import get_token
+from dotenv                          import load_dotenv
+from rest_framework.authtoken.views  import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 import os
 import json
 import requests
 import random
+# endregion
 
 # GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
 GOOGLE_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/google/'
@@ -45,37 +50,69 @@ class Index(APIView):
 class UserLoginCheck(APIView):
     def get(self, request, format=None):
         if request.user.is_authenticated:
-            id = request.user.id
-            user = get_user_model().objects.get(id=id)
-            user_serializer = UserSerializer(user)
-            return Response((user_serializer.data, { "loggedIn": True }))
-        else:
-            return Response((None, { "loggedIn": False }))
+            User = request.user
+            user_serializer = UserSerializer(User, many=False)
+            info            = user_serializer.data
 
-# /api/users/login/
-class UserLogin(APIView):
-    def post(self, request, format=None):
-        data     = JSONParser().parse(request)
-        email    = data['email']
-        password = data['password']
+            data = {
+                'user': {
+                    'id':         info['id'],
+                    'username':   info['username'],
+                    'email':      info['email'],
+                    'first_name': info['first_name'],
+                    'last_name':  info['last_name'],
+                    'premium':    info['premium'],
+                    'created_at': info['created_at'],
+                    'subforums':  info['subforums'],
+                },
+            }
+            return Response(data)
 
-        user = authenticate(username=email, password=password)
+class UserLogin(ObtainAuthToken):
 
-        
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
 
-        if user is not None:
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        if serializer.is_valid():
+
+            # Get token and user
+            user = serializer.validated_data['user']
+            token, created = Token.objects.get_or_create(user=user)
+            User = get_user_model()
+
+            # Get user data
+            user            = User.objects.get(id=user.pk)
             user_serializer = UserSerializer(user, many=False)
-            print(request.session.session_key)
-            return Response((user_serializer.data, { "loggedIn": True, }))
+            info            = user_serializer.data
+
+            data = {
+                'user': {
+                    'id':         info['id'],
+                    'username':   info['username'],
+                    'email':      info['email'],
+                    'first_name': info['first_name'],
+                    'last_name':  info['last_name'],
+                    'premium':    info['premium'],
+                    'created_at': info['created_at'],
+                    'subforums':  info['subforums'],
+                },
+                'token': token.key,
+            }
+
+            return Response(data)
         else:
-            return Response(('Error', { "loggedIn": False }))
+            return Response({'Error': 'Invalid Credentials'})
+
+        # serializer.is_valid(raise_exception=True)
 
 # /api/users/logout/
 class UserLogout(APIView):
     def get(self, request, format=None):
-        logout(request)
-        return Response()
+        if request.user.is_authenticated:
+            request.user.auth_token.delete()
+            return Response({ 'Success': 'Successfully logged out' })
+        else:
+            return HttpResponse({ 'Error': 'There was an error' }, status=status.HTTP_400_BAD_REQUEST)
 
 # /api/users/oauth/google/
 class UserOauthGoogle(APIView):

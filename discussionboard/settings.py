@@ -49,31 +49,24 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 CORS_ALLOW_CREDENTIALS = True
 SESSION_COOKIE_SAMESITE = None
 CSRF_COOKIE_SAMESITE = None
-SESSION_COOKIE_DOMAIN = '.herokuapp.com'
-CSRF_COOKIE_DOMAIN = '.herokuapp.com'
+# SESSION_COOKIE_DOMAIN = '.herokuapp.com'
+# CSRF_COOKIE_DOMAIN = '.herokuapp.com'
 SESSION_COOKIE_HTTPONLY = False
 
-CSRF_TRUSTED_ORIGINS = ['lambda-discussion-board-test.herokuapp.com/', 'localhost:3000/']
+# CSRF_TRUSTED_ORIGINS = ['lambda-discussion-board-test.herokuapp.com/', 'localhost:3000/']
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Rest Framework global settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASS': [
-        # 'rest_framework.permissions.IsAuthenticated',
-        # 'rest_framework.permissions.AllowAny',
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         
     ],
-    # 'DEFAULT_AUTHENTICATION_CLASSES': (
-    #     'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-    #     'rest_framework_social_oauth2.authentication.SocialAuthentication',
-    #     'rest_framework.authentication.BasicAuthentication',
-    #     'rest_framework.authentication.SessionAuthentication',
-    # ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
 }
 
 
@@ -90,9 +83,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    # 'oauth2_provider',
-    # 'social_django',
-    # 'rest_framework_social_oauth2',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
