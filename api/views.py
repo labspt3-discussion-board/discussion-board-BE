@@ -257,13 +257,19 @@ class UserOauthFacebook(APIView):
 
         user_info = info_req.json()
 
+        user_id    = user_info['id']
         first_name = user_info['first_name']
         last_name  = user_info['last_name']
         email      = user_info['email']
         username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
         auth_type  = 'oauth'
 
-        return Response(user_info)
+        # Get avatar image.
+        pic_req = requests.get('https://graph.facebook.com/' + user_id + '/picture')
+        avatar_img = pic_req.json()
+
+
+        return Response(avatar_img)
 
         # Create/login user
         User = get_user_model()
