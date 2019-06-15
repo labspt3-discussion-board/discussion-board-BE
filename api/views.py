@@ -64,6 +64,7 @@ class UserLoginCheck(APIView):
                     'premium':    info['premium'],
                     'created_at': info['created_at'],
                     'subforums':  info['subforums'],
+                    'avatar_img': '',
                 },
             }
             return Response(data)
@@ -96,6 +97,7 @@ class UserLogin(ObtainAuthToken):
                     'premium':    info['premium'],
                     'created_at': info['created_at'],
                     'subforums':  info['subforums'],
+                    'avatar_img': '',
                 },
                 'token': token.key,
             }
@@ -217,6 +219,7 @@ class UserOauthGoogle(APIView):
         last_name  = user_info['family_name']
         email      = user_info['email']
         username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
+        avatar_img = user_info['picture']
         auth_type  = 'oauth'
 
         # Create/login user
@@ -226,11 +229,12 @@ class UserOauthGoogle(APIView):
         except get_user_model().DoesNotExist:
             user = User.objects.create_user(username, email, first_name=first_name, last_name=last_name, auth_type=auth_type)
 
+        token, created = Token.objects.get_or_create(user=user)
+
         user_serializer = UserSerializer(user, many=False)
 
-        if user_serializer.data['auth_type'] == auth_type:
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            response = HttpResponseRedirect(CLIENT_APP_URL + '?id=' + str(user_serializer.data['id']) + '&loggedIn=true')
+        if user_serializer.data['auth_type'] == auth_type:            
+            response = HttpResponseRedirect(CLIENT_APP_URL + '?token=' + str(token.key) + '&loggedIn=true&avatarImg=' + str(avatar_img))
             return response
         else:
             response = HttpResponseRedirect(CLIENT_APP_URL + '?loggedIn=false')
@@ -258,6 +262,8 @@ class UserOauthFacebook(APIView):
         email      = user_info['email']
         username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
         auth_type  = 'oauth'
+
+        return Response(user_info)
 
         # Create/login user
         User = get_user_model()

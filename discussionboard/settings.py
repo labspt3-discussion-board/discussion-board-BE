@@ -50,16 +50,6 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-# SESSION_COOKIE_SAMESITE = None
-# CSRF_COOKIE_SAMESITE = None
-# SESSION_COOKIE_DOMAIN = '.herokuapp.com'
-# CSRF_COOKIE_DOMAIN = '.herokuapp.com'
-# SESSION_COOKIE_HTTPONLY = False
-
-# CSRF_TRUSTED_ORIGINS = ['lambda-discussion-board-test.herokuapp.com/', 'localhost:3000/']
-
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
 
 # Rest Framework global settings
 REST_FRAMEWORK = {
@@ -71,7 +61,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
 }
-
 
 # Application definition
 
@@ -114,8 +103,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # 'social_django.context_processors.backends',
-                # 'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -162,7 +149,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTHENTICATION_BACKENDS = (
    'django.contrib.auth.backends.ModelBackend',
-#    'rest_framework_social_oauth2.backends.DjangoOAuth2',
 )
 
 # Internationalization
