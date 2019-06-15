@@ -262,7 +262,8 @@ class UserOauthFacebook(APIView):
         last_name  = user_info['last_name']
         email      = user_info['email']
         username   = first_name.lower() + '.' + last_name.lower() + str(random.randint(0,1001))
-        avatar_img = user_info['picture']['data']['url']
+        # avatar_img = user_info['picture']['data']['url']
+        avatar_img   = ''
         auth_type  = 'oauth'
 
         # Get avatar image.505392740000217
