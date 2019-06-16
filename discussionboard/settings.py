@@ -30,45 +30,39 @@ DEBUG = True
 
 APPEND_SLASH=False
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 # change from cors allow all to this and add front end application
-CORS_ORIGIN_WHITELIST = [
-    "https://lambda-discussion-board.herokuapp.com",
-    "https://lambda-discussion-board-test.herokuapp.com",
+# CORS_ORIGIN_WHITELIST = (
+    # "https://lambda-discussion-board.herokuapp.com",
+    # "lambda-discussion-board-test.herokuapp.com/",
     # "https://sub.example.com",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000"
-]
+    # "http://localhost:8000",
+    # "http://127.0.0.1:8000",
+    # "http://localhost:3000",
+    # "http://127.0.0.1:3000"
+# )
 
 from corsheaders.defaults import default_headers
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-CSRFToken",
+    "Authorization",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-SESSION_COOKIE_SAMESITE = None
-# SESSION_COOKIE_DOMAIN = 'lambda-discussion-board-test.herokuapp.com/'
-SESSION_COOKIE_HTTPONLY = False
 
 # Rest Framework global settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASS': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
 
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 50,
-    # 'DEFAULT_AUTHENTICATION_CLASSES': (
-    #     'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-    #     'rest_framework_social_oauth2.authentication.SocialAuthentication',
-    #     'rest_framework.authentication.BasicAuthentication',
-    #     'rest_framework.authentication.SessionAuthentication',
-    # ),
 }
-
 
 # Application definition
 
@@ -83,9 +77,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    # 'oauth2_provider',
-    # 'social_django',
-    # 'rest_framework_social_oauth2',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -113,8 +105,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # 'social_django.context_processors.backends',
-                # 'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -161,7 +151,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTHENTICATION_BACKENDS = (
    'django.contrib.auth.backends.ModelBackend',
-#    'rest_framework_social_oauth2.backends.DjangoOAuth2',
 )
 
 # Internationalization
