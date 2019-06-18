@@ -1,7 +1,7 @@
 from rest_framework             import serializers
 
 # from django.contrib.auth.models import User
-from api.models                 import Subforum, Discussion, Comments, UserToSubforum
+from api.models                 import Subforum, Discussion, Comments, UserToSubforum, User
 from django.conf                import settings
 from django.contrib.auth        import get_user_model
 from django.db.models           import Count
@@ -13,11 +13,11 @@ class SubforumSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'private', 'created_at', 'owner')
 
 class UserSerializer(serializers.ModelSerializer):
-    subforums = SubforumSerializer(many=True, read_only=True, default=[])
+    subforum = SubforumSerializer(many=True, read_only=True, default=[])
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'premium', 'created_at', 'auth_type', 'subforums')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'premium', 'created_at', 'auth_type', 'subforum')
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,4 +36,4 @@ class DiscussionSerializer(serializers.ModelSerializer):
 class UserToSubforumSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserToSubforum
-        fields = ('user', 'subtopic')
+        fields = ('user', 'username', 'subtopic')

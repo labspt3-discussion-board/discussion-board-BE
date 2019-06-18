@@ -231,7 +231,7 @@ class UserOauthGoogle(APIView):
 
         user_serializer = UserSerializer(user, many=False)
 
-        if user_serializer.data['auth_type'] == auth_type:            
+        if user_serializer.data['auth_type'] == auth_type:
             response = HttpResponseRedirect(CLIENT_APP_URL + '?token=' + str(token.key) + '&loggedIn=true&avatarImg=' + str(avatar_img))
             return response
         else:
@@ -333,18 +333,18 @@ class SubforumList(APIView):
 
     def get(self, request, format=None):
         return Response(request.COOKIES)
- 
 
-# /api/Subforums/:uuid
+
+# /api/subforums/:id/
 class SubforumDetails(APIView):
     def get_object(self, id):
 
         try:
-            return Subforum.objects.get(uuid=uuid)
+            return Subforum.objects.get(id=id)
         except Subforum.DoesNotExist:
             raise Http404
 
-    def get(self, request, uuid, format=None):
+    def get(self, request, id, format=None):
 
         Subforum = self.get_object(id)
         Subforum_serializer = SubforumSerializer(Subforum)
@@ -353,7 +353,7 @@ class SubforumDetails(APIView):
     def put(self, request, id, format=None):
 
         data = JSONParser().parse(request)
-        Subforum = self.get_object(uuid)
+        Subforum = self.get_object(id)
         Subforum_serializer = SubforumSerializer(Subforum, data=data)
 
         if Subforum_serializer.is_valid():
@@ -368,8 +368,27 @@ class SubforumDetails(APIView):
         Subforum.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# /api/subtopics/id/users
-# /api/subtopics/id/discussions
+# /api/subforum/:id/members/
+class SubforumMembers(generics.ListAPIView):
+    serializer_class = UserToSubforumSerializer
+
+    lookup_url_kwarg = 'id'
+
+    def get_object(self, id):
+        try:
+            return Subforum.objects.get(id=id)
+        except Subforum.DoesNotExist:
+            raise Http404
+
+    def get_queryset(self):
+        id = self.kwargs.get(self.lookup_url_kwarg)
+        subforum = self.get_object(id)
+        if subforum:
+            members = UserToSubforum.objects.filter(subtopic=id)
+            return members
+
+
+# /api/subforum/:id/discussions/
 class SubforumDiscussions(generics.ListAPIView):
     serializer_class = DiscussionSerializer
     lookup_url_kwarg = 'id'
@@ -384,7 +403,7 @@ class SubforumDiscussions(generics.ListAPIView):
         id = self.kwargs.get(self.lookup_url_kwarg)
         subforum = self.get_object(id)
         if subforum:
-            discussion = Discussion.objects.filter(subtopic=id)
+            discussion = Discussion.objects.filter(subforum=id)
             return discussion
 
 # /api/discussions/
@@ -392,7 +411,7 @@ class DiscussionList(generics.ListCreateAPIView):
     queryset = Discussion.objects.all()
     serializer_class = DiscussionSerializer
 
-# /api/discussions/id/
+# /api/discussions/:id/
 class DiscussionDetails(APIView):
     def get_object(self, id):
 
@@ -425,7 +444,7 @@ class DiscussionDetails(APIView):
         discussion.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# /api/discussions/id/comments
+# /api/discussions/:id/comments
 class DiscussionComments(generics.ListAPIView):
     serializer_class = CommentSerializer
     lookup_url_kwarg = 'id'
@@ -453,7 +472,7 @@ class CommentList(generics.ListCreateAPIView):
     queryset = Comments.objects.all()
     serializer_class = CommentSerializer
 
-# /api/comments/id/
+# /api/comments/:id/
 class CommentDetails(APIView):
     def get_object(self, id):
 
