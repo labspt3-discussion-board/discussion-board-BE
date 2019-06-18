@@ -27,11 +27,11 @@ import requests
 import random
 # endregion
 
-# GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
-GOOGLE_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/google/'
+GOOGLE_AUTH_REDIRECT_URI   = 'http://localhost:8000/api/users/oauth/google/'
+# GOOGLE_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/google/'
 FACEBOOK_AUTH_REDIRECT_URI = 'https://discussion-board-api-test.herokuapp.com/api/users/oauth/facebook/'
-# CLIENT_APP_URL = 'http://localhost:3000/'
-CLIENT_APP_URL = 'https://lambda-discussion-board-test.herokuapp.com/'
+CLIENT_APP_URL             = 'http://localhost:3000/'
+# CLIENT_APP_URL           = 'https://lambda-discussion-board-test.herokuapp.com/'
 
 # /api/
 class Index(APIView):
@@ -105,8 +105,6 @@ class UserLogin(ObtainAuthToken):
             return Response(data)
         else:
             return Response({'Error': 'Invalid Credentials'})
-
-        # serializer.is_valid(raise_exception=True)
 
 # /api/users/register/
 class UserRegister(ObtainAuthToken):
