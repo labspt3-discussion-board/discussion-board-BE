@@ -13,11 +13,11 @@ class SubforumSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'private', 'created_at', 'owner')
 
 class UserSerializer(serializers.ModelSerializer):
-    subforum = SubforumSerializer(many=True, read_only=True, default=[])
+    subforums = SubforumSerializer(many=True, read_only=True, default=[])
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'premium', 'created_at', 'auth_type', 'subforum')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'premium', 'created_at', 'auth_type', 'subforums')
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,7 +31,7 @@ class DiscussionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Discussion
-        fields = ('id', 'title', 'description', 'upvote', 'downvote', 'owner', 'created_at', 'subforum', 'comments', 'comment_count')
+        fields = ('id', 'title', 'description', 'upvote', 'downvote', 'owner', 'created_at', 'subforums', 'comments', 'comment_count')
 
 class UserToSubforumSerializer(serializers.ModelSerializer):
     class Meta:
