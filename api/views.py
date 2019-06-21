@@ -21,6 +21,8 @@ from django.middleware.csrf          import get_token
 from dotenv                          import load_dotenv
 from rest_framework.authtoken.views  import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions      import IsAuthenticatedOrReadOnly
+from .permissions                    import IsCreator
 import os
 import json
 import requests
@@ -331,13 +333,18 @@ class UserDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /api/subforums/
-class SubforumList(APIView):
-
-    def get(self, request, format=None):
-        return Response(request.COOKIES)
-
+class SubforumList(generics.ListAPIView):
+    queryset = Subforum.objects.all()
+    serializer_class = SubforumSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 # /api/subforums/:id/
+class SubforumDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Subforum.objects.all()
+    serializer_class = SubforumSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly,IsCreator]
+    lookup_url_kwarg = 'id'
+"""
 class SubforumDetails(APIView):
     def get_object(self, id):
 
@@ -369,6 +376,7 @@ class SubforumDetails(APIView):
         Subforum = self.get_object(id)
         Subforum.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+"""
 
 # /api/subforum/:id/members/
 class SubforumMembers(generics.ListAPIView):
@@ -409,11 +417,18 @@ class SubforumDiscussions(generics.ListAPIView):
             return discussion
 
 # /api/discussions/
-class DiscussionList(generics.ListCreateAPIView):
+class DiscussionList(generics.ListAPIView):
     queryset = Discussion.objects.all()
     serializer_class = DiscussionSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 # /api/discussions/:id/
+class DiscussionDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Discussion.objects.all()
+    serializer_class = DiscussionSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly,IsCreator]
+    lookup_url_kwarg = 'id'
+"""
 class DiscussionDetails(APIView):
     def get_object(self, id):
 
@@ -445,6 +460,7 @@ class DiscussionDetails(APIView):
         discussion = self.get_object(id)
         discussion.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+"""
 
 # /api/discussions/:id/comments
 class DiscussionComments(generics.ListAPIView):
@@ -468,13 +484,21 @@ class DiscussionComments(generics.ListAPIView):
 class TopDiscussions(generics.ListAPIView):
     queryset = Discussion.objects.annotate(Count('upvote')).order_by('-upvote')
     serializer_class = DiscussionSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 # /api/comments/
-class CommentList(generics.ListCreateAPIView):
+class CommentList(generics.ListAPIView):
     queryset = Comments.objects.all()
     serializer_class = CommentSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 # /api/comments/:id/
+class CommentDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comments.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly,IsCreator]
+    lookup_url_kwarg = 'id'
+"""
 class CommentDetails(APIView):
     def get_object(self, id):
 
@@ -506,7 +530,8 @@ class CommentDetails(APIView):
         comment = self.get_object(id)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+"""
 
-class UserToSubforumList(generics.ListCreateAPIView):
+class UserToSubforumList(generics.ListAPIView):
     queryset = UserToSubforum.objects.all()
     serializer_class = UserToSubforumSerializer
