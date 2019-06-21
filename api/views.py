@@ -21,6 +21,8 @@ from django.middleware.csrf          import get_token
 from dotenv                          import load_dotenv
 from rest_framework.authtoken.views  import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions      import IsAuthenticatedOrReadOnly
+from .permissions                    import IsCreator
 import os
 import json
 import requests
@@ -473,8 +475,15 @@ class TopDiscussions(generics.ListAPIView):
 class CommentList(generics.ListCreateAPIView):
     queryset = Comments.objects.all()
     serializer_class = CommentSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 # /api/comments/:id/
+class CommentDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comments.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly,IsCreator]
+    lookup_url_kwarg = 'id'
+"""
 class CommentDetails(APIView):
     def get_object(self, id):
 
@@ -506,6 +515,7 @@ class CommentDetails(APIView):
         comment = self.get_object(id)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+"""
 
 class UserToSubforumList(generics.ListCreateAPIView):
     queryset = UserToSubforum.objects.all()
