@@ -414,8 +414,15 @@ class SubforumDiscussions(generics.ListAPIView):
 class DiscussionList(generics.ListCreateAPIView):
     queryset = Discussion.objects.all()
     serializer_class = DiscussionSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 # /api/discussions/:id/
+class DiscussionDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Discussion.objects.all()
+    serializer_class = DiscussionSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly,IsCreator]
+    lookup_url_kwarg = 'id'
+"""
 class DiscussionDetails(APIView):
     def get_object(self, id):
 
@@ -447,6 +454,7 @@ class DiscussionDetails(APIView):
         discussion = self.get_object(id)
         discussion.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+"""
 
 # /api/discussions/:id/comments
 class DiscussionComments(generics.ListAPIView):
