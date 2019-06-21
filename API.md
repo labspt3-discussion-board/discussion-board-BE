@@ -1,4 +1,4 @@
-# Lambda Forum Backend
+# Lambda Forum API
 
 ### https://discussion-board-api-test.herokuapp.com/api/
 
