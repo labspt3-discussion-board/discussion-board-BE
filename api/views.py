@@ -333,13 +333,18 @@ class UserDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /api/subforums/
-class SubforumList(APIView):
-
-    def get(self, request, format=None):
-        return Response(request.COOKIES)
-
+class SubforumList(generics.ListAPIView):
+    queryset = Subforum.objects.all()
+    serializer_class = SubforumSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 # /api/subforums/:id/
+class SubforumDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Subforum.objects.all()
+    serializer_class = SubforumSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly,IsCreator]
+    lookup_url_kwarg = 'id'
+"""
 class SubforumDetails(APIView):
     def get_object(self, id):
 
@@ -371,6 +376,7 @@ class SubforumDetails(APIView):
         Subforum = self.get_object(id)
         Subforum.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+"""
 
 # /api/subforum/:id/members/
 class SubforumMembers(generics.ListAPIView):
@@ -411,7 +417,7 @@ class SubforumDiscussions(generics.ListAPIView):
             return discussion
 
 # /api/discussions/
-class DiscussionList(generics.ListCreateAPIView):
+class DiscussionList(generics.ListAPIView):
     queryset = Discussion.objects.all()
     serializer_class = DiscussionSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -478,9 +484,10 @@ class DiscussionComments(generics.ListAPIView):
 class TopDiscussions(generics.ListAPIView):
     queryset = Discussion.objects.annotate(Count('upvote')).order_by('-upvote')
     serializer_class = DiscussionSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 # /api/comments/
-class CommentList(generics.ListCreateAPIView):
+class CommentList(generics.ListAPIView):
     queryset = Comments.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -525,6 +532,6 @@ class CommentDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 """
 
-class UserToSubforumList(generics.ListCreateAPIView):
+class UserToSubforumList(generics.ListAPIView):
     queryset = UserToSubforum.objects.all()
     serializer_class = UserToSubforumSerializer
