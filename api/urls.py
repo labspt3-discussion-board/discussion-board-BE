@@ -23,4 +23,5 @@ urlpatterns = [
     path('comments/'   ,views.CommentList.as_view() ,name='comments list'),
     path('comments/<id>/'   ,views.CommentDetails.as_view() ,name='comment details'),
     path('usertosubforum/'   ,views.UserToSubforumList.as_view() ,name='User to Subforum List'),
+    path('usertosubforum/<id>/'   ,views.UserToSubforumDetails.as_view() ,name='User to Subforum Details'),
 ]

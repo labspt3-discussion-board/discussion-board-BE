@@ -36,4 +36,4 @@ class DiscussionSerializer(serializers.ModelSerializer):
 class UserToSubforumSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserToSubforum
-        fields = ('user', 'username', 'subtopic')
+        fields = ('id', 'user', 'username', 'subtopic')

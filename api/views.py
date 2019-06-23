@@ -548,3 +548,9 @@ class CommentDetails(APIView):
 class UserToSubforumList(generics.ListAPIView):
     queryset = UserToSubforum.objects.all()
     serializer_class = UserToSubforumSerializer
+
+class UserToSubforumDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = UserToSubforum.objects.all()
+    serializer_class = UserToSubforumSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsUser]
+    lookup_url_kwarg = 'id'
