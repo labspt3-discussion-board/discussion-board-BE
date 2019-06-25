@@ -5,7 +5,7 @@ urlpatterns = [
     path(''                      ,views.Index.as_view()       ,name='index'       ),
     # path('create-user/'        ,views.createUser          ,name='create-user'   ),
     path('users/'                ,views.UserList.as_view()    ,name='users'       ),
-    # path('users/<uuid>/'       ,views.UserDetails.as_view() ,name='user details'),
+    path('users/<id>/'       ,views.UserDetails.as_view() ,name='user details'),
     path('users/login/'          ,views.UserLogin.as_view()   ,name='login'       ),
     path('users/register/'       ,views.UserRegister.as_view()   ,name='register' ),
     path('users/logout/'         ,views.UserLogout.as_view()  ,name='logout'      ),
@@ -23,4 +23,5 @@ urlpatterns = [
     path('comments/'   ,views.CommentList.as_view() ,name='comments list'),
     path('comments/<id>/'   ,views.CommentDetails.as_view() ,name='comment details'),
     path('usertosubforum/'   ,views.UserToSubforumList.as_view() ,name='User to Subforum List'),
+    path('usertosubforum/<id>/'   ,views.UserToSubforumDetails.as_view() ,name='User to Subforum Details'),
 ]

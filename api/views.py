@@ -22,7 +22,7 @@ from dotenv                          import load_dotenv
 from rest_framework.authtoken.views  import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions      import IsAuthenticatedOrReadOnly
-from .permissions                    import IsCreator
+from .permissions                    import IsCreator, IsUser
 import os
 import json
 import requests
@@ -290,6 +290,12 @@ class UserOauthFacebook(APIView):
             return response
 
 # /api/users/
+class UserList(generics.ListAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+"""
 class UserList(APIView):
 
     def get(self, request, format=None):
@@ -297,10 +303,16 @@ class UserList(APIView):
         users           = User.objects.all()
         user_serializer = UserSerializer(users, many=True)
         return Response(user_serializer.data)
+"""
 
-# /api/users/:id
+# /api/users/:id/
+class UserDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsUser]
+    lookup_url_kwarg = 'id'
+"""
 class UserDetails(APIView):
-
     def get_object(self, id):
 
         try:
@@ -331,6 +343,7 @@ class UserDetails(APIView):
         user = self.get_object(uuid)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+"""
 
 # /api/subforums/
 class SubforumList(generics.ListAPIView):
@@ -535,3 +548,9 @@ class CommentDetails(APIView):
 class UserToSubforumList(generics.ListAPIView):
     queryset = UserToSubforum.objects.all()
     serializer_class = UserToSubforumSerializer
+
+class UserToSubforumDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = UserToSubforum.objects.all()
+    serializer_class = UserToSubforumSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsUser]
+    lookup_url_kwarg = 'id'
