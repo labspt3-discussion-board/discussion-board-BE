@@ -4,7 +4,7 @@ from rest_framework                  import status
 from rest_framework.parsers          import JSONParser
 from rest_framework.views            import APIView
 from rest_framework.response         import Response
-from rest_framework                  import generics
+from rest_framework                  import generics, viewsets
 from django.views.decorators.csrf    import csrf_exempt
 from django.shortcuts                import render
 from django.http                     import HttpResponse, JsonResponse, Http404, HttpResponseRedirect
@@ -434,6 +434,12 @@ class DiscussionList(generics.ListAPIView):
     queryset = Discussion.objects.all()
     serializer_class = DiscussionSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
+
+# /api/discussions/:id/vote/
+class DiscussionVote(generics.UpdateAPIView):
+    queryset = Discussion.objects.all()
+    serializer_class = DiscussionSerializer
+    lookup_url_kwarg = 'id'
 
 # /api/discussions/:id/
 class DiscussionDetails(generics.RetrieveUpdateDestroyAPIView):
