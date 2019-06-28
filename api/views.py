@@ -505,6 +505,10 @@ class TopDiscussions(generics.ListAPIView):
     serializer_class = DiscussionSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+# /api/topdiscussions/:id/
+#class TopDiscussionsJoined(generics.ListAPIView):
+
+
 # /api/comments/
 class CommentList(generics.ListAPIView):
     queryset = Comments.objects.all()

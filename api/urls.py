@@ -21,6 +21,7 @@ urlpatterns = [
     path('discussions/<id>/vote/'   ,views.DiscussionVote.as_view() ,name='discussion vote'),
     path('discussions/<id>/comments/'   ,views.DiscussionComments.as_view() ,name='discussion comments'),
     path('topdiscussions/'   ,views.TopDiscussions.as_view() ,name='top ten discussions'),
+    #path('topdiscussions/<id>/'   ,views.TopDiscussionsJoined.as_view() ,name='users top discussions for subforums they joined'),
     path('comments/'   ,views.CommentList.as_view() ,name='comments list'),
     path('comments/<id>/'   ,views.CommentDetails.as_view() ,name='comment details'),
     path('usertosubforum/'   ,views.UserToSubforumList.as_view() ,name='User to Subforum List'),
