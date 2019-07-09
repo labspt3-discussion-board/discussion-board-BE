@@ -27,6 +27,7 @@ import os
 import json
 import requests
 import random
+import stripe
 # endregion
 
 # GOOGLE_AUTH_REDIRECT_URI = 'http://localhost:8000/api/users/oauth/google/'
@@ -564,3 +565,18 @@ class UserToSubforumDetails(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserToSubforumSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsUser]
     lookup_url_kwarg = 'id'
+
+# Strip Endpoint
+class StripePayment(APIView):
+    def post(self, request, *args, **kwargs):
+        stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
+        data = JSONParser().parse(request)
+        token = data['stripetoken']
+        charge = stripe.Charge.create(
+          amount=999,
+          currency='usd',
+          source=token,
+          receipt_email='jenny.rosen@example.com',
+        )
+
+        return Response(charge)

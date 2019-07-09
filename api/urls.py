@@ -26,4 +26,5 @@ urlpatterns = [
     path('comments/<id>/'   ,views.CommentDetails.as_view() ,name='comment details'),
     path('usertosubforum/'   ,views.UserToSubforumList.as_view() ,name='User to Subforum List'),
     path('usertosubforum/<id>/'   ,views.UserToSubforumDetails.as_view() ,name='User to Subforum Details'),
+    path('payment/'   ,views.StripePayment.as_view() ,name='Payment endpoint'),
 ]
