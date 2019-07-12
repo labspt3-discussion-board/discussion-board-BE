@@ -579,4 +579,4 @@ class StripePayment(APIView):
           receipt_email='jenny.rosen@example.com',
         )
 
-        return Response(charge)
+        return JsonResponse(charge)
